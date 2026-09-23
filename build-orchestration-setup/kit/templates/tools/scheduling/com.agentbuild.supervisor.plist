@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS launchd agent. Install:
+     edit the two REPO paths, copy to ~/Library/LaunchAgents/com.agentbuild.{{PROJECT_NAME}}.plist,
+     then: launchctl load ~/Library/LaunchAgents/com.agentbuild.{{PROJECT_NAME}}.plist
+     Keep the Mac awake while building: `caffeinate -s` or System Settings > Battery > Options. -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.agentbuild.{{PROJECT_NAME}}</string>
+  <key>ProgramArguments</key><array>
+    <string>/usr/bin/env</string><string>python3</string><string>tools/orch.py</string>
+    <string>--config</string><string>orchestration.toml</string><string>supervise</string>
+  </array>
+  <key>WorkingDirectory</key><string>REPO</string>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><dict><key>SuccessfulExit</key><false/></dict>
+  <key>StandardOutPath</key><string>REPO/../{{PROJECT_NAME}}-supervisor.out</string>
+  <key>StandardErrorPath</key><string>REPO/../{{PROJECT_NAME}}-supervisor.err</string>
+</dict></plist>

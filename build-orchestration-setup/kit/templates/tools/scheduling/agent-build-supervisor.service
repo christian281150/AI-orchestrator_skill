@@ -1,0 +1,16 @@
+# systemd user service (Linux). Install:
+#   cp tools/scheduling/agent-build-supervisor.service ~/.config/systemd/user/{{PROJECT_NAME}}-supervisor.service
+#   edit WorkingDirectory below, then: systemctl --user daemon-reload && systemctl --user enable --now {{PROJECT_NAME}}-supervisor
+#   loginctl enable-linger $USER   # keeps it running when you are logged out
+[Unit]
+Description={{PROJECT_NAME}} build supervisor
+
+[Service]
+WorkingDirectory=%h/src/{{PROJECT_NAME}}
+ExecStart=/usr/bin/env python3 tools/orch.py --config orchestration.toml supervise
+Restart=on-failure
+RestartSec=300
+Environment=PYTHONIOENCODING=utf-8
+
+[Install]
+WantedBy=default.target

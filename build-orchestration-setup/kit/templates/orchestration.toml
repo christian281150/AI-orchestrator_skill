@@ -1,0 +1,73 @@
+# orchestration.toml - read by tools/orch.py (supervisor, preflight, hooks, board checks).
+# Written by the setup session from docs/coordination/orchestration-config.md.
+# Paths are relative to this file unless absolute. ~ and %VARS% / $VARS expand.
+
+[project]
+name = "{{PROJECT_NAME}}"
+repo = "."
+main_branch = "{{MAIN_BRANCH}}"
+board = "docs/coordination/PROGRESS.md"
+decisions = "docs/coordination/decisions-log.md"
+session_prompt = "docs/coordination/SESSION-PROMPT.md"
+ledgers = "docs/coordination/ledgers"
+stop_file = "docs/coordination/STOP"
+state_dir = "~/.agent-build/{{PROJECT_NAME}}"       # run state, logs, markers - OUTSIDE the repo
+worktrees_dir = "../{{PROJECT_NAME}}-wt"             # one git worktree per lane
+id_pattern = '^(W\d+-\d+|F\d+)$'                     # W<wave>-<n> items, F<n> fixes
+
+[rounds]
+window_minutes = 180          # a round refills lanes for this long, then lets running leads finish
+max_round_minutes = 330       # hard cap - the ONLY time a round is ever killed
+pause_seconds = 30
+reprobe_minutes = 15          # how often to re-check a provider that hit its limit
+push_after_round = true
+fallback_when_limited = true  # coordinator limited -> build-only providers keep building approved plans
+max_identical_failures = 3    # same failure N times in a row -> stop and write BLOCKED.txt
+
+[git]
+author_name = "{{AUTHOR_NAME}}"
+author_email = "{{AUTHOR_EMAIL}}"
+# Lines the commit-msg hook rejects. Empty the list if you WANT AI attribution lines.
+forbid_trailers = ["Co-Authored-By: Claude", "Generated with [Claude", "Claude-Session:", "Co-authored-by: Codex"]
+
+[safety]
+forbid_paths = ["*.har", "*.pem", "*.key", ".env", ".env.*", "data/**", "secrets/**"]
+required_env = []             # names only, e.g. ["DB_PASSWORD_APP"]; values are never printed
+redact_terms = []             # your server names, domains, client names - blocked from commits and outgoing prompts
+
+# ---------------------------------------------------------------- providers
+# priority: lower = preferred. roles: coordinator | plan | review | build | merge
+# {prompt_file} {round_id} ({prompt} = full text) in round_command; {brief_file} ({brief} = full text) {worktree} {item} {branch} in build_command.
+# Verify every command against your installed CLI version (`<cli> --help`) - flags change.
+
+[[providers]]
+name = "claude"
+priority = 1
+roles = ["coordinator", "plan", "review", "build", "merge"]
+# Prompts are passed as a FILE reference: long command lines fail on Windows (~8k chars in some shells).
+round_command = ["claude", "-p", "Read {prompt_file} completely and follow it. It is your full instruction for this round.", "--model", "opus"]
+build_command = ["claude", "-p", "Read {brief_file} completely and carry it out in {worktree} on branch {branch}.", "--model", "sonnet"]
+limit_patterns = ["usage limit reached", "limit will reset", "resets? (?:at )?\\d", "you've hit your limit"]
+max_parallel = 4
+[providers.env]
+CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS = "30"              # helper cap per round - raise only after measuring RAM
+CLAUDE_CODE_PRINT_BG_WAIT_CEILING_MS = "14400000"        # print mode otherwise stops background work early
+
+[[providers]]
+name = "codex"
+priority = 2
+roles = ["build"]                                        # builds approved plans only; never merges
+build_command = ["codex", "exec", "--cd", "{worktree}", "--full-auto", "Read {brief_file} completely and carry it out on branch {branch}."]
+native_limit = "codex_rollout"                           # its own usage record decides, not log text
+native_limit_threshold = 97
+max_parallel = 5
+strip_env = []                                           # e.g. ["DB_PASSWORD_ADMIN", "CLOUD_API_TOKEN"]
+
+[[providers]]
+name = "gemini"
+priority = 3
+enabled = false                                          # optional third provider, build-only
+roles = ["build"]
+build_command = ["gemini", "-p", "Read {brief_file} completely and carry it out in {worktree} on branch {branch}."]
+limit_patterns = ["quota exceeded", "rate limit"]
+max_parallel = 2

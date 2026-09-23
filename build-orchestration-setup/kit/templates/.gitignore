@@ -1,0 +1,16 @@
+# secrets and captures never enter git
+.env
+.env.*
+*.pem
+*.key
+*.har
+secrets/
+# data lives outside the repo; synthetic fixtures go in tests/fixtures/
+data/
+# orchestration run state lives in state_dir (outside the repo) - these are stray copies
+docs/coordination/STOP
+live-view.html
+__pycache__/
+.venv/
+node_modules/
+dist/
