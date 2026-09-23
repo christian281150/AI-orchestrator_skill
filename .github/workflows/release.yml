@@ -1,0 +1,21 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install pytest && git config --global user.email ci@example.com && git config --global user.name ci
+      - run: python -m pytest tests -q
+      - name: Build skill zip (upload this in Claude apps)
+        run: cd skills && zip -r ../build-orchestration-setup.zip build-orchestration-setup -x "*/__pycache__/*"
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: build-orchestration-setup.zip
+          generate_release_notes: true

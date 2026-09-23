@@ -1,5 +1,22 @@
 # Changelog
 
+All notable changes to this project are documented here. The format follows
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
+
+## 1.2.0 - 2026-09-24
+### Added
+- Installable plugin: `.claude-plugin/` (plugin + marketplace), `.codex-plugin/`, `.cursor-plugin/` manifests;
+  skill moved to `skills/build-orchestration-setup/`.
+- Commands `/orchestrate` and `/build-status`.
+- Agent Skills frontmatter: `license`, `compatibility`, `metadata` (author, version, repository).
+- Worked example `examples/lunch-poll/`.
+- Governance: NOTICE (trademarks, no third-party code), SECURITY (private reporting, security model),
+  CODE_OF_CONDUCT (Contributor Covenant 2.1), CITATION.cff, issue and PR templates, Dependabot for Actions.
+- Release workflow: tagging `v*` runs the tests and attaches the skill zip to a GitHub release.
+- Tests for manifest validity, one version everywhere, skill format, the example; SPDX headers in the toolkit.
+### Changed
+- README rewritten: install per tool, how it works, failover diagram, philosophy, compatibility, FAQ.
+
 ## 1.1.0 - 2026-09-24
 - Provider-neutral throughout: lead provider vs build providers; engine-neutral `ROLES.md` rendered per tool.
 - Skills plan: questionnaire round (scan installed, owner's ideas, propose the rest, project skills),

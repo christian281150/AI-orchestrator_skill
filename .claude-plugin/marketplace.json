@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "agent-build-orchestrator",
+  "description": "Marketplace for the agent-build-orchestrator plugin",
+  "owner": {
+    "name": "christian281150"
+  },
+  "plugins": [
+    {
+      "name": "agent-build-orchestrator",
+      "description": "Spec-to-shipped multi-agent build orchestration for any app and any AI coding tools: clarity sprint, guided questionnaire, skills plan, lanes, provider failover, never-twice memory, reporting.",
+      "version": "1.2.0",
+      "source": "./",
+      "author": {
+        "name": "christian281150",
+        "url": "https://github.com/christian281150"
+      },
+      "category": "development"
+    }
+  ]
+}

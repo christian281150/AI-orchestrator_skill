@@ -1,0 +1,27 @@
+name: Bug report
+description: Something in the skill or the toolkit does not work as documented
+labels: [bug]
+body:
+  - type: checkboxes
+    attributes:
+      label: Before filing
+      options:
+        - label: I searched open and closed issues
+          required: true
+        - label: I removed credentials, client names and private data from everything below
+          required: true
+  - type: input
+    attributes: {label: Version, description: "orchestrator/__init__.py or plugin version"}
+    validations: {required: true}
+  - type: input
+    attributes: {label: Agent tools and versions, description: "e.g. Claude Code 2.x, Codex CLI 0.x"}
+    validations: {required: true}
+  - type: input
+    attributes: {label: OS and shell}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: What happened, description: "Commands run and verbatim output (preflight output helps)"}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: What you expected}
+    validations: {required: true}

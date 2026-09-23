@@ -1,0 +1,36 @@
+# Example only - paths point into this example folder.
+[project]
+name = "lunch-poll"
+repo = "."
+main_branch = "main"
+state_dir = "~/.agent-build/lunch-poll-example"
+worktrees_dir = "../lunch-poll-wt"
+
+[rounds]
+window_minutes = 180
+fallback_when_limited = true
+
+[git]
+author_name = "Lunch Owner"
+author_email = "owner@example.com"
+forbid_trailers = ["Co-Authored-By: Claude", "Co-authored-by: Codex"]
+
+[safety]
+required_env = ["LUNCH_CHAT_WEBHOOK"]
+redact_terms = []
+
+[[providers]]
+name = "claude"
+priority = 1
+roles = ["coordinator", "plan", "review", "build", "merge"]
+round_command = ["claude", "-p", "Read {prompt_file} completely and follow it.", "--model", "opus"]
+max_parallel = 3
+
+[[providers]]
+name = "codex"
+priority = 2
+roles = ["build"]
+build_command = ["codex", "exec", "--cd", "{worktree}", "--full-auto", "Read {brief_file} completely and carry it out on branch {branch}."]
+native_limit = "codex_rollout"
+max_parallel = 2
+strip_env = ["LUNCH_CHAT_WEBHOOK"]

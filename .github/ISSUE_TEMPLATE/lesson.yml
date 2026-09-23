@@ -1,0 +1,12 @@
+name: Lesson from a real build
+description: Share a failure mode you hit while running agents, so the kit can prevent it
+labels: [lesson]
+body:
+  - type: textarea
+    attributes: {label: What happened, description: "What broke, and what it cost (time, tokens, rework)"}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Root cause}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: What prevents it, description: "A rule, a check, a template change"}
