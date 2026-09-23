@@ -29,6 +29,9 @@ def main(argv: list[str] | None = None) -> int:
 
     sub.add_parser("unfilled", help="list {{PLACEHOLDERS}} still to fill").add_argument("target", nargs="?", default=".")
     sub.add_parser("preflight", help="check everything a round depends on")
+    s = sub.add_parser("skills", help="inventory installed skills per engine; flag skills agent files name but lack")
+    s.add_argument("root", nargs="?", default=".")
+    s.add_argument("--extra", nargs="*", default=[], help="more skill folders to scan")
     s = sub.add_parser("supervise", help="run rounds unattended (with provider failover)")
     s.add_argument("config_path", nargs="?")
     s.add_argument("--passes", type=int, default=None)
@@ -63,6 +66,11 @@ def main(argv: list[str] | None = None) -> int:
         hits = unfilled(a.target)
         print("\n".join(hits) or "no placeholders left")
         return 1 if hits else 0
+    if a.cmd == "skills":
+        from .skills import report
+        lines, missing = report(Path(a.root).resolve(), a.extra)
+        print("\n".join(lines))
+        return 1 if missing else 0
     if a.cmd == "supervise":
         from .supervisor import supervise
         print(supervise(a.config_path or a.config, a.passes))

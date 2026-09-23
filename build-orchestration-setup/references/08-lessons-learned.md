@@ -1,7 +1,7 @@
 # Lessons paid for
 
-From a multi-week build run by up to 10 parallel Claude leads plus Codex lanes on one Windows PC, with a
-chat session monitoring. Each lesson cost at least one broken round, a lost afternoon, or an owner
+From a multi-week build run by up to 10 parallel lead lanes (Claude) plus build lanes on a second provider
+(Codex) on one Windows PC, with a chat session monitoring. The lessons are provider-neutral. Each lesson cost at least one broken round, a lost afternoon, or an owner
 interruption. Each is built into the kit where it can be; the rest are rules.
 
 ## Process and memory

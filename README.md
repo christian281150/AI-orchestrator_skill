@@ -1,7 +1,8 @@
 # agent-build-orchestrator
 
-A Claude skill plus a small toolkit for running a **multi-agent software build** - Claude, Codex and other
-AI coding agents working in parallel lanes - from a finished spec to shipped code, without the usual waste:
+A Claude skill plus a small toolkit for running a **multi-agent software build** - any project type, any mix
+of AI coding tools (Claude Code, Codex, Gemini CLI, IDE agents, ...) working in parallel lanes - from a finished
+spec to shipped code, optimised for **best quality at the lowest cost**, without the usual waste:
 work done twice, state lost between sessions, builds stalled on usage limits, and an owner interrupted at 3 a.m.
 
 It is distilled from a real multi-week build (up to 10 parallel Claude leads plus Codex lanes on one PC,
@@ -18,23 +19,23 @@ not-in-v1), with acceptance criteria for every must-have.
 |---|---|
 | 0 Gate | refuses to start without idea + spec + architecture (offers dictation to create them) |
 | 1 Clarity sprint | readiness scorecard, ambiguity hunt one question at a time, P1/P2/P3 + not-in-v1, acceptance criteria, pre-made decisions, owner-reserved actions |
-| 2 Questionnaire | 7 short rounds: where it runs (local / cloud / chat / hybrid), which providers, how many lanes, which models, what happens on a usage limit, guardrails, reporting |
+| 2 Questionnaire + skills plan | 9 short rounds: project and people, where it runs (local / cloud / chat / hybrid), which tools lead and which build, scale, cost and quality, **skills** (scan what's installed, use the owner's ideas, propose the rest - fewest skills per task type), limits and failover, guardrails, reporting |
 | 3 Workspace | folder layout, git with line endings / hooks / author fixed first, credentials as env vars, tools, test environment, claude.ai Project, schedulers |
-| 4-5 Kit + board | board, rules, coordinator prompt, 10 agent roles, ledgers, config - filled from your answers; waves of work items with estimates |
+| 4-5 Kit + board | board, rules, coordinator prompt, engine-neutral roles rendered per tool, skills plan, ledgers, config - filled from your answers; waves of work items with estimates and risk tiers |
 | 6 Prove it | preflight (every check can go red), hook controls, one dry round |
 | 7 Run | unattended rounds with automatic restart and provider failover |
 | 8 Report | board, decisions log, dashboard metric, local live view, handovers |
 
 ## How failover works
 ```
-round on Claude ──ok──► push ─► next round
+round on lead provider ──ok──► push ─► next round
       │
    usage limit (detected from the provider's own record, or the log tail - never quoted text)
       ▼
-Claude marked limited until its reset ─► Codex / Gemini / ... build APPROVED plans
+lead marked limited until its reset ─► build providers build APPROVED plans
                                          on their own branches (never main)
       ▼
-sleep until earliest reset ─► next Claude round gates those branches FIRST
+sleep until earliest reset ─► next lead round gates those branches FIRST
                               (review, verify, merge or reject) ─► normal work
 ```
 One merge gate. External providers never plan, merge, touch the board, live systems or credentials.
@@ -65,6 +66,7 @@ python tools/orch.py supervise         # unattended rounds (after preflight pass
 |---|---|
 | `init <repo>` | copy templates + tools, never overwrite, wire git hooks, set author |
 | `unfilled` | list `{{TODO}}` placeholders |
+| `skills [repo]` | installed skills per engine; skills agent files name but lack |
 | `preflight` | board valid, hooks wired, author, provider CLIs on PATH, skills installed, env vars present, state dir outside repo, RAM |
 | `supervise` | the round loop with limit detection, fallback lanes, re-exec on change, STOP file, stop after 3 identical failures |
 | `board validate / ready / metrics` | consistency (done needs a commit hash), next work by priority, shipped % |
@@ -86,7 +88,7 @@ python tools/orch.py supervise         # unattended rounds (after preflight pass
 ```
 build-orchestration-setup/     the skill (install this folder)
   SKILL.md                     the phases
-  references/                  01-spec-clarity ... 08-lessons-learned
+  references/                  01-spec-clarity ... 09-skills-and-cost-quality
   kit/templates/               copied into your repo by `init`
   kit/tools/orch.py            the toolkit (stdlib Python)
 tests/                         pytest suite

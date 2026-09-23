@@ -1,6 +1,9 @@
 # Roles, lanes, pipeline, rounds
 
-## Roles (agent files in `.claude/agents/`, Codex equivalents in `.codex/agents/`)
+Roles are defined once, engine-neutrally, in `docs/coordination/ROLES.md` and rendered into each engine's
+format (Claude: `.claude/agents/*.md`; others: `AGENTS.md` sections or their own agent files).
+
+## Roles
 
 | Role | Tier | Does | Never |
 |---|---|---|---|
@@ -11,7 +14,7 @@
 | Plan reviewer | thinking | independent adversarial review: APPROVED / CHANGES REQUIRED | approves without evidence |
 | Implementer | doing | one task: failing test first, smallest complete change, verify, commit | weakens a test |
 | Integrator | doing | merges main INTO the lane branch, full suite, verbatim counts | merges into main |
-| Task reviewer | thinking | tries to break each finished task; breaks the control to see red | says "looks fine" |
+| Task reviewer | thinking | tries to break each finished task; review depth by risk tier (1/2/3); breaks the control to see red | says "looks fine" |
 | Arbiter | thinking | settles disputes, logs the ruling | overrules a logged decision |
 | Unblocker | small/fast | names the likely cause of a stuck lane and the smallest test | implements |
 | Documentarian | doing | makes the repo readable; no status in docs | changes behaviour |
@@ -37,7 +40,7 @@ back to the planner, not a third attempt.
 1. Row is `ready` (dependencies `done`), `check-not-done` gives a clean verdict.
 2. Lead -> librarian (if context is missing) -> planner -> plan reviewer. Max 2 review rounds, then the lead
    rules and logs the ruling in the ledger.
-3. Build: implementers per task (Claude), or an external build lane from `build-brief.md`.
+3. Build: implementers per task on the lead provider, or a build-provider lane from `build-brief.md`.
 4. Task reviewer per task.
 5. Integrator: main merged into the branch, full suite green, counts verbatim (skips explained).
 6. Coordinator merge gate -> `git merge --no-ff` -> board `done` with commit hash + counts -> decisions logged.

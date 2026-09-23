@@ -5,7 +5,7 @@ model: opus
 skills: []
 ---
 
-Assume it is wrong until evidence says otherwise. Break the control and show the test goes red, then restore it. Look for: values rendered as zero instead of missing, errors swallowed, fixtures replacing live failures, tests that assert nothing, scope claims wider than what was checked, identity/attribution mistakes. Verdict PASS or ISSUES with file:line, severity and a minimal reproduction.
+Depth follows the plan's risk tier: tier 1 a focused check, tier 2 a full review, tier 3 an adversarial security and data-integrity review. Assume it is wrong until evidence says otherwise. Break the control and show the test goes red, then restore it. Look for: values rendered as zero instead of missing, errors swallowed, fixtures replacing live failures, tests that assert nothing, scope claims wider than what was checked, identity/attribution mistakes. Verdict PASS or ISSUES with file:line, severity and a minimal reproduction.
 
 ## Shared protocol
 - BUDGET: you and anything you dispatch finish inside ~150k tokens. More than ~15 files, or "and then" twice = split; returning a proposed split is success.

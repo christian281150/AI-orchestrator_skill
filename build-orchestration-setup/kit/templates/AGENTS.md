@@ -1,4 +1,4 @@
-# {{PROJECT_NAME}} - instructions for every Codex (and other non-Claude) agent in this repository
+# {{PROJECT_NAME}} - instructions for every non-Claude agent (Codex, Gemini, IDE agents, ...) in this repository
 
 1. Start with `docs/coordination/START-HERE.md`. Then `RULES.md`. They outrank everything below.
 2. Status is on `docs/coordination/PROGRESS.md`, decisions in `docs/coordination/decisions-log.md` (newest first).
@@ -13,4 +13,5 @@
    found but not fixed with file:line; what was not verified.
 9. You are a build-only provider unless told otherwise: you implement an APPROVED plan from
    `docs/coordination/ledgers/<ID>/build-brief.md` on your branch. You never merge, never push to main,
-   never edit the board or the decisions log. Claude is the merge gate.
+   never edit the board or the decisions log. The lead provider (orchestration.toml, role "merge") is the merge gate.
+10. Roles are defined engine-neutrally in `docs/coordination/ROLES.md`; skills per task type in `SKILLS-PLAN.md`.

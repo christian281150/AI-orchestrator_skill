@@ -27,8 +27,9 @@ max_identical_failures = 3    # same failure N times in a row -> stop and write 
 [git]
 author_name = "{{AUTHOR_NAME}}"
 author_email = "{{AUTHOR_EMAIL}}"
-# Lines the commit-msg hook rejects. Empty the list if you WANT AI attribution lines.
-forbid_trailers = ["Co-Authored-By: Claude", "Generated with [Claude", "Claude-Session:", "Co-authored-by: Codex"]
+# Lines the commit-msg hook rejects (AI attribution trailers of the providers you use).
+# Empty the list if you WANT AI attribution lines.
+forbid_trailers = ["Co-Authored-By: Claude", "Generated with [Claude", "Claude-Session:", "Co-authored-by: Codex", "Co-authored-by: Gemini"]
 
 [safety]
 forbid_paths = ["*.har", "*.pem", "*.key", ".env", ".env.*", "data/**", "secrets/**"]
@@ -36,7 +37,8 @@ required_env = []             # names only, e.g. ["DB_PASSWORD_APP"]; values are
 redact_terms = []             # your server names, domains, client names - blocked from commits and outgoing prompts
 
 # ---------------------------------------------------------------- providers
-# priority: lower = preferred. roles: coordinator | plan | review | build | merge
+# Provider-neutral: add any CLI agent. priority: lower = preferred. roles: coordinator | plan | review | build | merge
+# The examples below (Claude lead, Codex + Gemini builders) are one setup; replace them with the owner's tools.
 # {prompt_file} {round_id} ({prompt} = full text) in round_command; {brief_file} ({brief} = full text) {worktree} {item} {branch} in build_command.
 # Verify every command against your installed CLI version (`<cli> --help`) - flags change.
 

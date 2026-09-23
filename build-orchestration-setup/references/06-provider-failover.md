@@ -15,8 +15,9 @@ Each provider has a priority (lower = preferred), roles, commands and a limit de
 | `build` | may implement an approved plan on its own branch | any provider |
 
 ## Detection - how the supervisor knows a limit was hit
-1. **The provider's own record decides when it exists.** (Codex writes rate-limit usage into its session
-   files; the kit reads it: `native_limit = "codex_rollout"`, threshold 97%.)
+1. **The provider's own record decides when it exists.** (Example: Codex writes rate-limit usage into its
+   session files; the kit reads it: `native_limit = "codex_rollout"`, threshold 97%. Add a reader for any
+   other provider that keeps such a record - `providers.py`.)
 2. **Text fallback, restricted:** only the last N lines of the round log (default 30), and only when the run
    exited non-zero or never printed its `ROUND RESULT:` verdict.
    Why: matching anywhere in the log once raised a false "limit hit" - the agent had read a board line
@@ -44,7 +45,7 @@ Each provider has a priority (lower = preferred), roles, commands and a limit de
 re-execs itself between rounds when its code or config changed; a `STOP` file ends it cleanly between rounds.
 
 ## What makes fallback safe
-- External providers only build **plans Claude (the planner/reviewer) already approved**, from a
+- Build providers only build **plans the lead provider's planner and reviewer already approved**, from a
   self-contained brief. They never plan, never merge, never touch the board, the decisions log, live
   systems or credentials (`strip_env`).
 - One merge gate. Code from three providers reaching main through one reviewer is manageable; three merge

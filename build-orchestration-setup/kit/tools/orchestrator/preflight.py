@@ -35,17 +35,6 @@ def _free_ram_gb() -> float | None:
     return None
 
 
-def _skills_named(agent_file: Path) -> list[str]:
-    text = agent_file.read_text(encoding="utf-8", errors="replace")
-    if text.startswith("﻿"):
-        return ["__BOM__"]
-    m = re.search(r"^skills:\s*\[(.*?)\]", text, re.M) or re.search(r"^skills:\s*\n((?:\s+-\s+.+\n)+)", text, re.M)
-    if not m:
-        return []
-    raw = m.group(1)
-    return [s.strip(" -'\"\n") for s in re.split(r"[,\n]", raw) if s.strip(" -'\"\n")]
-
-
 def run(cfg: Config) -> tuple[int, list[str]]:
     out: list[str] = []
     fails = 0
@@ -90,21 +79,19 @@ def run(cfg: Config) -> tuple[int, list[str]]:
     stripped = {n for p in cfg.providers for n in p.strip_env}
     if stripped:
         out.append(f"[INFO] stripped from build-only providers: {', '.join(sorted(stripped))}")
-    agent_dirs = [cfg.root / ".claude" / "agents", cfg.root / ".codex" / "agents"]
-    skill_dirs = [cfg.root / ".claude" / "skills", Path.home() / ".claude" / "skills",
-                  cfg.root / ".agents" / "skills", Path.home() / ".agents" / "skills"]
-    named = missing = 0
-    for d in agent_dirs:
+    from .skills import inventory, named_in_agents
+    installed = {i["name"] for i in inventory(cfg.root)}
+    for rel in (".claude/agents", ".codex/agents"):
+        d = cfg.root / rel
         for f in sorted(d.glob("*.md")) if d.exists() else []:
-            for s in _skills_named(f):
-                if s == "__BOM__":
-                    res(False, f"{f.name} starts with a byte-order mark (breaks frontmatter)")
-                    continue
-                named += 1
-                if not any((sd / s / "SKILL.md").exists() for sd in skill_dirs):
-                    missing += 1
-                    res(False, f"{f.name} names skill '{s}' - not installed")
-    res(missing == 0, f"every skill an agent file names is installed - {named} named, {named - missing} present")
+            if f.read_bytes().startswith(b"\xef\xbb\xbf"):
+                res(False, f"{f.name} starts with a byte-order mark (breaks frontmatter)")
+    named = [(f, n) for f, ns in named_in_agents(cfg.root).items() for n in ns]
+    for f, n in named:
+        if n not in installed:
+            res(False, f"{Path(f).name} names skill '{n}' - not installed")
+    missing = sum(1 for _, n in named if n not in installed)
+    res(missing == 0, f"every skill an agent file names is installed - {len(named)} named, {len(named) - missing} present")
     try:
         cfg.state_dir.mkdir(parents=True, exist_ok=True)
         (cfg.state_dir / ".probe").write_text("ok")

@@ -24,6 +24,11 @@ order, you are the merge gate, and you keep the board honest.
   Never "look at X and improve it".
 - Set the board row to `in-progress` with owner = the lead's name in the same commit that dispatches.
 
+## Cost and quality
+Review depth and reviewer model follow each plan's risk tier (1 / 2 / 3). Dispatch each role on the model
+tier set in `ROLES.md`; name only the skills `SKILLS-PLAN.md` gives that task type. A rule you have to
+explain in a second dispatch becomes a project skill (propose it in the owner batch or write it and log it).
+
 ## Merge gate (you, only you)
 A lead's branch merges when: every task in its ledger is done with verify output; a task reviewer passed it;
 the integrator merged `{{MAIN_BRANCH}}` into it and the full suite is green (verbatim counts); no reserved
