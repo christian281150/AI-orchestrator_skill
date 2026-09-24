@@ -3,6 +3,16 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 1.3.0 - 2026-09-24
+### Added
+- `references/10-runtime-resilience.md`: running for days - plan just in time by the build-lane runway, fixes to a
+  build-provider fix lane, a watchdog independent of rounds, restart reconciliation (knowledge gap, reviewers, blind
+  re-plan), cloud helpers (measured billing, steady and accelerate helpers, to-do lists, handback, setup checklist),
+  machine traps (scheduled-task children, memory, hook-check time limits), race discipline, usage and credit measurement.
+- Questionnaire items 4.5, 4.6, 5.5, 7.5, 7.6, 7.7; lessons 39-48; pointers in SKILL.md (Phase 7, start ritual).
+### Fixed
+- `CITATION.cff`: `cff-version` is the format version (1.2.0), not the release version.
+
 ## 1.2.1 - 2026-09-24
 ### Changed
 - Test fixtures no longer contain secret-looking literals: fake IP (documentation range), email (reserved

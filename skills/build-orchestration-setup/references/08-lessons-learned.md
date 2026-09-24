@@ -75,3 +75,24 @@ interruption. Each is built into the kit where it can be; the rest are rules.
 37. **External build agents with full access** (sandbox broken on the OS): credentials stripped from their
     environment, residual risk named in the handover.
 38. **Data leaving the machine**: redact with a proven scanner (planted secret found, then zero hits).
+
+## Running for days  (built into `10-runtime-resilience.md`)
+39. **Planning ahead drained the lead allowance** for plans that then waited. -> Plan only while ready work is below
+    half the build-lane cap; review and gate first.
+40. **Stopped build lanes stayed stopped** while the orchestrator was limited. -> A watchdog on the OS scheduler,
+    independent of rounds, restarts them when allowance or memory allows.
+41. **A restarted orchestrator trusted its memory** while build lanes and cloud helpers had kept working. ->
+    Measure the knowledge gap first; review it; re-plan build-provider plans blind and compare.
+42. **Processes started by a periodic scheduled task died when the tick ended.** -> Start them outside the task
+    (WMI on Windows); relaunch anything that never wrote a status.
+43. **Memory, not allowance, was the limit** at about 10 lead + 5 build lanes (commit near 90%). -> Memory guard in every
+    launcher; the watchdog holds new starts at about 85%; the owner sets the cap by RAM.
+44. **A documentation check in the pre-commit hook hung for minutes under memory pressure** and froze every agent's
+    commit. -> Time limit per hook check; on a timeout, warn and let the commit through; end hung checks.
+45. **Cloud sessions started before the repository connection existed could not push**, and their work had to be
+    carried out by patch. -> Connect the repository first; check the session shows it.
+46. **A failing environment setup script stopped the cloud session before it started.** -> The setup script never fails.
+47. **"Checks passed" was logged as "committed"** although a ref race refused the commit. -> A commit counts only
+    when it landed; restore the edited paths otherwise.
+48. **Cloud credit was assumed to be drawn only past the subscription limit**; one measured session drew it while the
+    allowance was far from its limit. -> Measure billing with the usage endpoint before pacing cloud helpers.

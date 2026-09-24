@@ -5,7 +5,7 @@ license: MIT
 compatibility: Toolkit needs git and Python 3.11+ (standard library only). Works with any agent that loads SKILL.md folders; the unattended supervisor drives any CLI coding agent.
 metadata:
   author: christian281150
-  version: "1.2.1"
+  version: "1.3.0"
   repository: https://github.com/christian281150/agent-build-orchestrator
 ---
 
@@ -28,7 +28,7 @@ role, review depth by risk, the fewest skills that cover each task, plans before
 
 ## Kit and references
 This skill ships with a kit and reference files:
-- `references/01-spec-clarity.md` ... `09-skills-and-cost-quality.md`: the detail behind each phase.
+- `references/01-spec-clarity.md` ... `10-runtime-resilience.md`: the detail behind each phase.
 - `kit/templates/`: board, rules, coordinator prompt, engine-neutral roles, skills plan, ledgers, hooks,
   config and schedulers.
 - `kit/tools/orch.py`: a toolkit of standard-library Python 3.11+ commands:
@@ -186,6 +186,11 @@ Split an item that touches more than about 15 files or needs "and then" twice. N
 - **Cloud sessions**: one session per lane, one merge-gate session, the board in the repo.
 - **Chat-driven**: the chat is the coordinator. Dispatch each role with its role text and the shared protocol pasted in.
 - **Monitoring chat**: adjusts rules, never kills a running coordinator, and commits only via `safe-commit`.
+- **Running for days** -> `references/10-runtime-resilience.md`: plan just in time (only while ready work is below half
+  the build-lane cap); fixes go to a build-provider fix lane; a watchdog on the OS scheduler, independent of rounds,
+  restarts and feeds build lanes; every round starts with **restart reconciliation** (measure what changed while
+  away, 1-5 reviewers, blind re-plan of build-provider plans); cloud helpers are paced by measured billing, work
+  to-do lists and hand back when the local allowance returns.
 
 Pipeline per item:
 1. check-not-done
@@ -208,6 +213,7 @@ Pipeline per item:
 
 ## Standing rules for every agent -> `references/05-memory-and-no-double-work.md`
 - Start ritual: newest handover, then git log and status, then the board, then decisions, then supervisor state. Measure; don't trust.
+  An orchestrator restarting a round also measures the knowledge gap first (`10-runtime-resilience.md` section 3).
 - Before any item, run `check-not-done <ID>`. After it, in the same turn: commit, update the board with evidence, log decisions, move on.
 - Status lives only on the board. When you change the world, change the document in the same commit.
 - Decisions are closed. Never overrule a logged decision: solve the problem inside it, or flag it in one line.

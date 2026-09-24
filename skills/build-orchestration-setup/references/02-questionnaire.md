@@ -54,6 +54,11 @@ waiting on each one also holds a lead-provider slot.
 **4.4 Planning lanes** - ~2 lead slots write approved plans + build briefs ahead of the builders
 (**recommended** when 4.2 > 0) / none.
 
+**4.5 Plan pacing** (see `10-runtime-resilience.md` section 1) - plan just in time: only while ready work
+(approved plans + fix briefs) is below half the build-lane cap (**recommended**) / a fixed number of planning lanes /
+plan everything up front. **4.6 Build-lane cap while the lead provider also runs** - lower (for example 5) while both run,
+higher (for example 10) when the lead provider is limited or idle (**recommended** when RAM is the limit) / one fixed cap.
+
 ## Round 5 - Cost and quality  (see `09-skills-and-cost-quality.md`)
 **5.1 Optimise for** - best quality at the lowest cost (**recommended**: cheapest adequate model per role,
 review depth by risk tier, few skills per agent) / maximum quality regardless of cost / minimum cost.
@@ -63,6 +68,9 @@ and reviewers, mid tier for leads (**recommended**) / mid tier everywhere.
 tier for trivial tasks / same as thinking. Any provider's most expensive tier: never by default.
 **5.4 Budget guard** [native_limit_threshold] - stop starting new work at 97% of an allowance and flag it
 (**recommended**) / alert only / none.
+
+**5.5 Fixes** - bounded rework goes to a build-provider fix lane with its own reviewer, and the lead provider
+runs only the merge gate (**recommended**) / the lead provider fixes / whoever built it fixes.
 
 ## Round 6 - Skills  (see `09-skills-and-cost-quality.md`)
 **6.1 What do you already have?** - scan installed skills and suggest (**recommended**; run
@@ -85,6 +93,16 @@ everything pauses / another provider takes over the coordinator role (only if tr
 between rounds on rule changes (**recommended**) / manual start.
 **7.4 Chat-only models** - use as a redacted copy-paste "desk" on a throwaway branch, never main (experiment
 only) / not at all (**recommended** unless the owner wants to test one).
+
+**7.5 Watchdog independent of rounds** (see `10-runtime-resilience.md` section 2) - an OS-scheduled tick every
+~10 min that restarts limit- or memory-stopped build lanes, uses idle build capacity and never merges
+(**recommended** for unattended builds) / the supervisor only / none.
+**7.6 Cloud helpers** (section 4) - measure how they bill first; then one steady helper while the runway says plan,
+plus accelerate helpers only once the local lead provider is limited, with handback when it is back
+(**recommended** when cloud credit exists) / cloud helpers always / never. Credit floor: stop below a set amount.
+**7.7 Restart reconciliation** (section 3) - every round starts by measuring what changed while the orchestrator
+was away; 1-5 reviewers; blind re-plan for plans written by a build provider (**recommended**) / review only /
+trust the last state (not recommended).
 
 ## Round 8 - Guardrails
 **8.1 Autonomy** - decide and log: back up -> decide -> log chosen and not chosen -> continue
