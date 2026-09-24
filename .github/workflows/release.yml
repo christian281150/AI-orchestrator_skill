@@ -15,7 +15,7 @@ jobs:
       - run: python -m pytest tests -q
       - name: Build skill zip (upload this in Claude apps)
         run: cd skills && zip -r ../build-orchestration-setup.zip build-orchestration-setup -x "*/__pycache__/*"
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@v3
         with:
           files: build-orchestration-setup.zip
           generate_release_notes: true
