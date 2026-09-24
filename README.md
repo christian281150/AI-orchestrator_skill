@@ -222,14 +222,16 @@ deleting and credentials are *reserved actions*: agents prepare them and queue t
 
 ## Verified and not verified
 
-- **Test suite** (39 tests; CI on Linux, macOS and Windows with Python 3.11 and 3.13): supervisor runs with
+- **Test suite** (52 tests; CI on Linux, macOS and Windows with Python 3.11 and 3.13): supervisor runs with
   stand-in providers (limit hit, build provider takeover, gate in the next round, STOP, repeated-failure stop);
   keeper passes (restart capped per day, build lanes, idle planning never touching unsafe lanes, cloud planners
   steady / accelerate / handback / credit floor); knowledge-gap reconciliation; git hook controls; safe-commit
-  during a merge; preflight going red; skills inventory; the profile (project overrides home, empty never overrides, bad values and secret-looking keys go red); manifests and one version everywhere; the example.
+  during a merge; preflight going red; skills inventory; the profile (project overrides home, empty never overrides, bad values and secret-looking keys go red; learning fills only empty values); doctor going red with a fix per problem; usage readers against pinned sample records, including a changed format that must stop new work; manifests and one version everywhere; the example.
 - **In CI on every push:** `ruff` lint and the Agent Skills reference validator (`skills-ref validate`).
 - **By hand:** `claude plugin validate` passes (one expected warning: the root `CLAUDE.md` is for contributors, not plugin context); installing from GitHub via `/plugin marketplace add` delivers the
   skill and both commands; the skills CLI discovers the skill.
+- **Usage readers:** the Claude Code record shapes were taken from Claude Code 2.1.281 itself; the Codex shape is
+  the 2026 session-record format and was not re-checked against a live Codex install.
 - **Not verified by the tests:** real agent CLIs (flags and usage formats change between versions - check every
   command in `orchestration.toml` against `<cli> --help`), cloud-session launch commands, the Codex and Cursor
   manifests inside those apps, and the OS scheduler templates.

@@ -3,6 +3,25 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 1.7.0 - 2026-09-24
+Fewer ways to get stuck, and the failover can see the limit coming.
+### Added
+- `orch.py doctor` and `/check-setup`: is this computer ready - before any project exists. Python, Git and its
+  identity, the AI tools (named, from the profile, or found on PATH), the project folder (cloud sync, spaces),
+  disk and memory; every problem comes with a plain-language fix.
+- `orch.py profile learn`: after the first setup, saves its answers into the profile - only into EMPTY values,
+  never over a value the owner set, never guessing free text; dry run first, `--write` applies.
+- Usage readers `orch.py usage claude|codex`: how full each allowance is, from the tool's own record
+  (Claude Code: status-line capture and stream-json `rate_limit_event`; Codex: session records), with the
+  CLI version each was checked against. Reports `ok` / `no-data` / `unreadable`; a window whose reset passed
+  counts as 0 %.
+- Provider key `usage_fail_closed` (default true): an unreadable meter means no new work until it reads again;
+  `preflight` shows every meter. `{python}` in `usage_command` = the Python running the toolkit.
+- Tests for all three, each shown going red (52 in total).
+### Changed
+- The template wires both readers; docs: CONFIGURATION.md section 4 (usage meters, status-line setup),
+  GETTING-STARTED (check everything at once), reference 06 (step 4b), SKILL.md Phase 0 (doctor) and Phase 2 (learn).
+
 ## 1.6.0 - 2026-09-24
 Installation and customization release - no change to how builds run.
 ### Added
