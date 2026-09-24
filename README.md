@@ -12,7 +12,7 @@
 [![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](#whats-inside)
 [![Discussions](https://img.shields.io/badge/feedback-Discussions-blue.svg)](https://github.com/christian281150/AI-orchestrator_skill/discussions)
 
-**[Get the skill](#get-the-skill)** · [How it works](#how-it-works) · [Which tool when](#which-tool-when) · [A personal note](#a-personal-note) · [Give feedback](https://github.com/christian281150/AI-orchestrator_skill/discussions)
+**[Get the skill](#get-the-skill)** · [Getting started (no experience needed)](docs/GETTING-STARTED.md) · [Customize](#customize-it) · [How it works](#how-it-works) · [Which tool when](#which-tool-when) · [A personal note](#a-personal-note) · [Give feedback](https://github.com/christian281150/AI-orchestrator_skill/discussions)
 
 </div>
 
@@ -44,6 +44,11 @@ provider, cloud planners and a keeper process**, running unattended on one PC. E
 at least once; the [50 lessons](skills/build-orchestration-setup/references/08-lessons-learned.md) are included.
 
 ## Get the skill
+
+> [!TIP]
+> **New to this?** Follow **[Getting started](docs/GETTING-STARTED.md)** - every step from installing Git and
+> Python to your first build, with a check after each step and a troubleshooting table. About 1 hour to install,
+> 1-2 hours for the first setup.
 
 | Where you work | How |
 |---|---|
@@ -100,6 +105,23 @@ Everything beyond level 1 is optional. The skill recommends the lowest level tha
 Every tool name in the templates is an example. Swap in your own: any CLI agent can be the lead provider or a
 build provider in `orchestration.toml`.
 
+## Customize it
+
+Two files, both plain text ([TOML](https://toml.io)), both optional:
+
+| File | Holds | Effect |
+|---|---|---|
+| **Your profile** `~/.ai-orchestrator/profile.toml` (optional per-project override `.ai-orchestrator.toml`) | your standing preferences: name for commits, plain or technical language, lead and build tools, models, limits, what only you may do, reporting, naming | every question it answers is **skipped** in the setup - shown once in the summary to confirm |
+| **Project config** `orchestration.toml` | tools and their commands, lanes, rounds, safety, keeper | written by the setup from your answers; edit any time, then run `preflight` |
+
+```text
+python <skill>/scripts/orch.py profile init     # create your profile from the commented template
+python <skill>/scripts/orch.py profile check    # allowed values, no secrets
+python <skill>/scripts/orch.py profile show     # which questions it answers
+```
+Every key, its allowed values and ready-made recipes (one tool only, 8 GB machine, cloud off, AI co-author
+allowed, keep agents off production): **[CONFIGURATION.md](docs/CONFIGURATION.md)**.
+
 ## Which tool when
 
 The routing the skill proposes (the full table is in [`10-tool-routing.md`](skills/build-orchestration-setup/references/10-tool-routing.md)):
@@ -143,6 +165,8 @@ skills/build-orchestration-setup/   THE SKILL
   references/                       11 files, loaded on demand (readiness gate ... long-running builds)
   scripts/orch.py                   the toolkit - Python 3.11+ standard library only
   assets/templates/                 copied into your repo by `orch.py init`
+  assets/profile.toml               your customization file (template)
+docs/                               GETTING-STARTED.md (beginners), CONFIGURATION.md (every setting)
 commands/                           /orchestrate, /build-status (Claude Code)
 .claude-plugin/ .codex-plugin/ .cursor-plugin/   plugin manifests
 examples/lunch-poll/                a filled-in example setup
@@ -152,6 +176,7 @@ tests/                              pytest suite
 | Toolkit command | Does |
 |---|---|
 | `init <repo>` / `unfilled` | copy templates + tools (never overwrite, hooks, author) / list placeholders left |
+| `profile init · show · check` | your customization file: create it, see which questions it answers, check it |
 | `skills [repo]` | installed skills per engine; skills agent files name but lack |
 | `preflight` | everything a round depends on - PASS / WARN / FAIL |
 | `supervise` | unattended rounds: limit detection, fallback build lanes, gate, re-exec on change, STOP file |
@@ -194,11 +219,11 @@ deleting and credentials are *reserved actions*: agents prepare them and queue t
 
 ## Verified and not verified
 
-- **Test suite** (36 tests; CI on Linux, macOS and Windows with Python 3.11 and 3.13): supervisor runs with
+- **Test suite** (39 tests; CI on Linux, macOS and Windows with Python 3.11 and 3.13): supervisor runs with
   stand-in providers (limit hit, build provider takeover, gate in the next round, STOP, repeated-failure stop);
   keeper passes (restart capped per day, build lanes, idle planning never touching unsafe lanes, cloud planners
   steady / accelerate / handback / credit floor); knowledge-gap reconciliation; git hook controls; safe-commit
-  during a merge; preflight going red; skills inventory; manifests and one version everywhere; the example.
+  during a merge; preflight going red; skills inventory; the profile (project overrides home, empty never overrides, bad values and secret-looking keys go red); manifests and one version everywhere; the example.
 - **In CI on every push:** `ruff` lint and the Agent Skills reference validator (`skills-ref validate`).
 - **By hand:** `claude plugin validate` passes (one expected warning: the root `CLAUDE.md` is for contributors, not plugin context); installing from GitHub via `/plugin marketplace add` delivers the
   skill and both commands; the skills CLI discovers the skill.

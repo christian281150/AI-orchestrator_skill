@@ -3,6 +3,24 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 1.6.0 - 2026-09-24
+Installation and customization release - no change to how builds run.
+### Added
+- `docs/GETTING-STARTED.md`: step-by-step guide for people without a coding background - is this for you,
+  glossary, three install paths, tool installs with a check after each step, preparing idea/spec/architecture,
+  first run with time per phase, day-to-day (status, owner decisions, pause), update/remove, troubleshooting.
+- `docs/CONFIGURATION.md`: every setting of the profile and `orchestration.toml`, allowed values, which
+  questionnaire item each answers, and recipes (one tool only, small machine, cloud off, AI co-author allowed,
+  plain language, own naming, keep agents off production).
+- Personal profile - the customization file: `assets/profile.toml` template; `orch.py profile init | show | check`;
+  home file `~/.ai-orchestrator/profile.toml` plus optional project file `.ai-orchestrator.toml` (set values win,
+  empty values never override). The questionnaire skips every item the profile answers; `init` takes the commit
+  author from it. `profile check` goes red on disallowed values, bad percentages and secret-looking entries.
+- Tests for the profile (39 in total).
+### Changed
+- README: "New here?" pointer, a *Customize it* section, docs in the layout; SKILL.md Phase 2 and the
+  questionnaire read the profile first; `/orchestrate` mentions it; AGENTS.md keeps CONFIGURATION.md in sync.
+
 ## 1.5.0 - 2026-09-24
 Gap-closing release: nothing new in concept - it fills gaps in the existing rounds, keeper and failover that
 showed up while running builds for several days.

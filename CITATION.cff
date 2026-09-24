@@ -5,7 +5,7 @@ abstract: "A skill and toolkit for running multi-agent software builds from spec
 type: software
 authors:
   - alias: christian281150
-version: 1.5.0
+version: 1.6.0
 date-released: 2026-09-24
 license: MIT
 repository-code: "https://github.com/christian281150/AI-orchestrator_skill"

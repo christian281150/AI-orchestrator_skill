@@ -5,7 +5,7 @@ license: MIT
 compatibility: Toolkit needs git and Python 3.11+ (standard library only). Works with any agent that loads SKILL.md folders; the unattended supervisor drives any CLI coding agent.
 metadata:
   author: christian281150
-  version: "1.5.0"
+  version: "1.6.0"
   repository: https://github.com/christian281150/AI-orchestrator_skill
 ---
 
@@ -32,7 +32,8 @@ never pay twice.
 - `references/01-readiness-gate.md` ... `11-long-running-builds.md` - the detail behind each phase (load on demand).
 - `assets/templates/` - board, rules, coordinator prompt, engine-neutral roles, skills plan, ledgers, hooks,
   config, schedulers.
-- `scripts/orch.py` - standard-library Python 3.11+ toolkit: `init`, `unfilled`, `skills`, `preflight`,
+- `assets/profile.toml` - the owner's customization file (standing preferences; see Phase 2).
+- `scripts/orch.py` - standard-library Python 3.11+ toolkit: `init`, `unfilled`, `profile`, `skills`, `preflight`,
   `supervise`, `keeper`, `gap`, `board`, `check-not-done`, `safe-commit`, `redact`, `snapshot`, `live-view`.
 
 If `references/`, `scripts/` and `assets/` are not next to this file, get them from
@@ -90,6 +91,10 @@ Fail -> stop and hand over the gap list.
 ## Phase 2 - Setup questionnaire and skills plan -> `02-questionnaire.md`, `09-skills-and-cost-quality.md`, `10-tool-routing.md`
 Ten short rounds, all about *how* to build. Record answers + options not taken in `orchestration-config.md`,
 machine settings in `orchestration.toml`.
+**First read the owner's profile:** `orch.py profile show --project <repo>` (home `~/.ai-orchestrator/profile.toml`,
+project `.ai-orchestrator.toml` wins). Skip every item it answers, list those answers once in the summary for
+confirmation, and ask only the rest. No profile: offer `orch.py profile init` at the end so the next project asks
+less. `orch.py profile check` must be clean before its values are used.
 1. Project and people - project type (decides lanes), who decides, vocabulary, date vs quality vs cost.
 2. Where it runs - local CLI + supervisor / cloud sessions / chat-driven / hybrid; OS; involvement;
    **adoption level 1-4**.

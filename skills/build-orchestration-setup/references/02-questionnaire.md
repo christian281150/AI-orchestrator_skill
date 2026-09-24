@@ -8,6 +8,10 @@ Ten short rounds, typically 20-30 minutes. Rules:
   "(Recommended)". The owner can always type their own answer.
 - Derive each recommendation from the intake (Phase 0), the spec and the readiness gate - never default
   blindly. Skip any question those already answer, and say which answer you took from where.
+- **Profile first.** Run `orch.py profile show --project <repo>`: it prints each questionnaire item the owner's
+  profile answers (e.g. `2.4   3` = adoption level 3). Skip those items, show them once in the summary ("from your profile"), and
+  never override them silently. `profile check` problems are shown to the owner before anything is used.
+  Key-by-key map: `docs/CONFIGURATION.md` in the skill repository.
 - Provider-neutral: nothing here assumes a particular AI vendor. "Lead provider" = the one trusted to plan,
   review and merge; "build providers" = the ones that implement approved plans.
 - Unattended owner: take the recommendations, log each as a decision, list the assumptions at the top.

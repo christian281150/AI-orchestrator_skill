@@ -9,3 +9,4 @@ Where the idea, spec and architecture live: $ARGUMENTS
 If that is empty, ask for their location first. Say at the start that this skill builds a settled spec and does
 not write or align specs. If any of the three is missing or still under discussion, stop at Phase 0 and explain
 what must be settled first.
+Before the questionnaire, read the owner's profile (`orch.py profile show`) and skip every question it answers.

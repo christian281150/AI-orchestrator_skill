@@ -29,6 +29,11 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--force", action="store_true")
 
     sub.add_parser("unfilled", help="list {{PLACEHOLDERS}} still to fill").add_argument("target", nargs="?", default=".")
+    s = sub.add_parser("profile", help="your personal customization file: init | show | check")
+    s.add_argument("action", choices=["init", "show", "check"])
+    s.add_argument("--project", nargs="?", const=".", default=None,
+                   help="use <repo>/.ai-orchestrator.toml (default repo: current folder) instead of the home profile")
+    s.add_argument("--force", action="store_true")
     sub.add_parser("preflight", help="check everything a round depends on")
     s = sub.add_parser("skills", help="inventory installed skills per engine; flag skills agent files name but lack")
     s.add_argument("root", nargs="?", default=".")
@@ -58,10 +63,29 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("arg", nargs="?")
     a = ap.parse_args(argv)
 
+    if a.cmd == "profile":
+        from . import profile
+        if a.action == "init":
+            ok, msg = profile.init(Path(a.project).resolve() if a.project else None, force=a.force)
+            print(msg)
+            return 0 if ok else 1
+        prof, used = profile.load(Path(a.project or ".").resolve())
+        if a.action == "check":
+            probs = profile.check(prof)
+            print("\n".join(probs) or f"profile OK ({', '.join(used) or 'no profile file found - everything will be asked'})")
+            return 1 if probs else 0
+        print("files: " + (", ".join(used) or "none - everything will be asked"))
+        ans = profile.answered(prof)
+        print(f"questionnaire items answered by the profile ({len(ans)}):")
+        for item, v in ans.items():
+            print(f"  {item:<5} {v}")
+        return 0
     if a.cmd == "init":
         from .init_kit import init
-        vals = {"PROJECT_NAME": a.name, "AUTHOR_NAME": a.author_name, "AUTHOR_EMAIL": a.author_email,
-                "MAIN_BRANCH": a.main_branch}
+        from .profile import load as load_profile
+        owner = load_profile(Path(a.target).resolve())[0].get("owner", {})
+        vals = {"PROJECT_NAME": a.name, "AUTHOR_NAME": a.author_name or owner.get("git_author_name", ""),
+                "AUTHOR_EMAIL": a.author_email or owner.get("git_author_email", ""), "MAIN_BRANCH": a.main_branch}
         print("\n".join(init(a.target, vals, a.force)))
         return 0
     if a.cmd == "unfilled":

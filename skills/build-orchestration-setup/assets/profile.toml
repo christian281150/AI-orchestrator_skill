@@ -1,0 +1,69 @@
+# AI Orchestrator - personal profile (your customization file)
+#
+# What it is:  your standing preferences, written once and reused for every project.
+#              The skill reads it before the setup questionnaire and SKIPS every question
+#              this file already answers (it still shows them in the summary for one confirmation).
+# Where it lives (the second one wins where both set a value):
+#   1. ~/.ai-orchestrator/profile.toml       - all your projects
+#   2. <your repo>/.ai-orchestrator.toml     - this project only
+# Create it:   python <skill>/scripts/orch.py profile init            (all projects)
+#              python <skill>/scripts/orch.py profile init --project  (this project)
+# Check it:    python <skill>/scripts/orch.py profile check
+#
+# Rules: every value is optional. Leave a value empty ("", 0, [] or false where noted)
+# and the skill simply asks you. Never put passwords, tokens or keys in this file.
+
+[owner]
+name = ""                       # how the agents address you, e.g. "Alex"
+git_author_name = ""            # name on every commit
+git_author_email = ""           # for public repos use your git host's no-reply address
+vocabulary = ""                 # "" ask | "plain" (every abbreviation explained) | "technical"
+language = ""                   # language for questions and reports, e.g. "en", "de"; "" = the one you write in
+timezone = ""                   # for schedules and reports, e.g. "UTC", "Europe/Berlin"
+
+[defaults]                      # pre-answers to the setup questionnaire
+adoption_level = 0              # 0 ask | 1 rituals | 2 unattended | 3 multi-provider | 4 full
+execution_home = ""             # "" ask | "local" | "cloud" | "chat" | "hybrid"
+involvement = ""                # "" ask | "unattended" | "approve-waves" | "interactive"
+optimise_for = ""               # "" ask | "quality-per-cost" | "max-quality" | "min-cost"
+autonomy = ""                   # "" ask | "decide-and-log" | "ask"
+git_model = ""                  # "" ask | "feat-branches" | "pr-per-lane" | "trunk"
+commit_attribution = ""         # "" ask | "owner-only" | "ai-coauthor-allowed"
+round_hours = 0                 # 0 ask | refill window per round in hours (3 is a good start)
+planning_pace = ""              # "" ask | "just-in-time" | "ahead"
+fix_routing = ""                # "" ask | "build-provider" | "lead"
+
+[tools]                         # names are YOUR choice - any CLI coding agent works
+lead = ""                       # the one tool that plans, reviews and merges, e.g. "claude"
+build = []                      # tools that build approved plans, e.g. ["codex"]
+cloud_sessions = ""             # "" ask | "on" | "off"
+chat_desk = ""                  # "" ask | "on" | "off"
+
+[models]                        # tiers by role - use the names your tools accept
+thinking = ""                   # coordinator, planner, reviewers, arbiter
+doing = ""                      # implementer, integrator, librarian, docs
+small = ""                      # relays, quick lookups
+
+[limits]
+budget_guard_pct = 0            # 0 ask | stop starting new work at this % of an allowance (97 recommended)
+build_lanes_shared = 0          # 0 ask | build lanes while the lead also runs
+build_lanes_lead_limited = 0    # 0 ask | build lanes while the lead is limited or idle
+memory_no_new_start_pct = 0     # 0 ask | no new lanes above this memory use (85 recommended)
+memory_refuse_pct = 0           # 0 ask | launcher refuses above this (90 recommended)
+
+[reserved]                      # actions only YOU may do; [] = ask
+actions = []                    # e.g. ["writes to live", "spending money", "publishing", "deleting unrebuildable data", "credentials"]
+
+[skills]
+preferred = []                  # skills you always want considered, e.g. ["test-driven-development"]
+avoid = []                      # skills never to propose
+sources = []                    # where your skills come from, e.g. ["~/.claude/skills", "a public collection"]
+
+[reporting]
+dashboard = ""                  # "" ask | "twice-daily" | "daily" | "none"
+live_view = ""                  # "" ask | "on" | "off"
+handover_every_session = true   # write a handover whenever a session ends
+
+[naming]
+branch_pattern = ""             # "" = feat/<lane>-<ID>-<topic>
+id_pattern = ""                 # "" = W<wave>-<n> items and F<n> fixes

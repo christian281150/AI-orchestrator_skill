@@ -10,6 +10,9 @@ skills/build-orchestration-setup/   the skill - follows the Agent Skills spec (a
   references/NN-topic.md            detail (01 readiness gate ... 11 long-running builds), loaded on demand
   scripts/                          orch.py + orchestrator/ - Python 3.11+ standard library ONLY
   assets/templates/                 files `orch.py init` copies into a user's repository
+  assets/profile.toml               the owner's customization file template (`orch.py profile init`)
+docs/                               GETTING-STARTED.md (beginners) and CONFIGURATION.md (every key) - update
+                                    CONFIGURATION.md whenever a profile or orchestration.toml key changes
 commands/                           Claude Code slash commands (markdown + frontmatter)
 .claude-plugin/ .codex-plugin/ .cursor-plugin/   plugin manifests - same version everywhere
 examples/lunch-poll/                worked example; must stay valid (a test checks it)
