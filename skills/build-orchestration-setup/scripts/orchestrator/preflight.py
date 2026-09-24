@@ -4,7 +4,6 @@ supervisor start. PASS / WARN / FAIL lines; exit 1 on any FAIL."""
 from __future__ import annotations
 
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -106,7 +105,8 @@ def run(cfg: Config) -> tuple[int, list[str]]:
         inside = str(cfg.state_dir.resolve()).startswith(str(cfg.root.resolve()))
     res(not inside, "state dir is outside the repository")
     status = subprocess.run(["git", "-C", str(cfg.root), "status", "--porcelain"], capture_output=True).stdout.decode()
-    res(None if status.strip() else True, "main working tree clean" + ("" if not status.strip() else f" - {len(status.splitlines())} changed path(s)"))
+    dirty = f" - {len(status.splitlines())} changed path(s)" if status.strip() else ""
+    res(None if dirty else True, "main working tree clean" + dirty)
     ram = _free_ram_gb()
     if ram is not None:
         res(True if ram >= 2 else None, f"free RAM {ram:.1f} GB (each parallel lead needs roughly 0.5-1 GB)")

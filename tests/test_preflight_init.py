@@ -14,7 +14,7 @@ def test_preflight_passes_what_it_should_and_goes_red(repo):
     # control: break the board -> must go red
     cfg.board.write_text(cfg.board.read_text().replace("| open |", "| wip |", 1))
     _, lines2 = preflight.run(cfg)
-    assert any(l.startswith("[FAIL] board") for l in lines2)
+    assert any(line.startswith("[FAIL] board") for line in lines2)
 
 
 def test_preflight_catches_bom_and_missing_skill(repo):

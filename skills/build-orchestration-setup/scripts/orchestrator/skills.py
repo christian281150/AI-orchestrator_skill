@@ -37,7 +37,7 @@ def _description(skill_md: Path) -> str:
     val = m.group(1).strip()
     if val in ("|", ">", "|-", ">-", ""):   # YAML block scalar: take the indented lines that follow
         rest = text[m.end():].splitlines()[1:]
-        val = " ".join(l.strip() for l in rest[:3] if l.startswith((" ", "\t")))
+        val = " ".join(line.strip() for line in rest[:3] if line.startswith((" ", "\t")))
     return val.strip("'\"")[:140]
 
 
@@ -81,6 +81,7 @@ def report(root: Path, extra: list[str] | None = None) -> tuple[list[str], int]:
             for n in names:
                 ok = n in by_name
                 missing += not ok
-                lines.append(f"  {'ok     ' if ok else 'MISSING'} {n:<30} <- {f}" + (f" (engines: {', '.join(sorted(set(by_name[n])))})" if ok else ""))
+                engines = f" (engines: {', '.join(sorted(set(by_name[n])))})" if ok else ""
+                lines.append(f"  {'ok     ' if ok else 'MISSING'} {n:<30} <- {f}{engines}")
     lines.append(f"{missing} named skill(s) missing")
     return lines, missing

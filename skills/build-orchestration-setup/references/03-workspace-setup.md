@@ -16,7 +16,7 @@ commit, hash or data load.
 
 ## 2. Repository and git - before the first real commit
 1. `git init -b main` (or clone the empty GitHub repo).
-2. Run the kit: `python <skill>/kit/tools/orch.py init <repo> --name <app> --author-name "<name>" --author-email "<email>"`.
+2. Run the kit: `python <skill>/scripts/orch.py init <repo> --name <app> --author-name "<name>" --author-email "<email>"`.
    It copies templates + tools, never overwrites, sets `core.hooksPath=.githooks` and the git author.
 3. **`.gitattributes` first** (the kit writes it): fix line endings before anything is hashed. A file hashed
    under one setting and checked under another fails its checksum with unchanged content.

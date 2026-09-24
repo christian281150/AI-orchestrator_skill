@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-"""Copy the kit (templates + tools) into a target repository. Never overwrites an
+"""Copy the kit (assets/templates + scripts) into a target repository. Never overwrites an
 existing file unless --force; reports every file it wrote or skipped."""
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ import stat
 import subprocess
 from pathlib import Path
 
-KIT = Path(__file__).resolve().parent.parent.parent      # .../kit
+SKILL_ROOT = Path(__file__).resolve().parents[2]      # skills/build-orchestration-setup
 TEXT_SUFFIXES = {".md", ".toml", ".json", ".py", ".txt", ".yml", ".yaml", ".sh", ".service", ".plist", ".ps1", ".cmd", ".bat", ""}
 CRLF_SUFFIXES = {".ps1", ".cmd", ".bat"}   # Windows shells; everything else LF
 
@@ -17,7 +17,7 @@ def init(target: str | Path, values: dict[str, str], force: bool = False) -> lis
     target = Path(target).resolve()
     target.mkdir(parents=True, exist_ok=True)
     report: list[str] = []
-    for src_root, dst_root in ((KIT / "templates", target), (KIT / "tools", target / "tools")):
+    for src_root, dst_root in ((SKILL_ROOT / "assets" / "templates", target), (SKILL_ROOT / "scripts", target / "tools")):
         for src in sorted(src_root.rglob("*")):
             if src.is_dir() or "__pycache__" in src.parts:
                 continue

@@ -3,7 +3,7 @@
 ## Reporting a vulnerability
 Please **do not open a public issue**. Use GitHub's private reporting instead:
 **Security -> Report a vulnerability** on this repository. You will get an answer within 7 days. Include the
-version (`skills/build-orchestration-setup/kit/tools/orchestrator/__init__.py`), your OS, the agent CLI(s) and
+version (`skills/build-orchestration-setup/scripts/orchestrator/__init__.py`), your OS, the agent CLI(s) and
 a minimal reproduction.
 
 ## Supported versions

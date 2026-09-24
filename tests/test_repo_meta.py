@@ -8,7 +8,7 @@ SKILL = ROOT / "skills" / "build-orchestration-setup"
 
 
 def _version_init():
-    return re.search(r'__version__ = "([^"]+)"', (SKILL / "kit/tools/orchestrator/__init__.py").read_text()).group(1)
+    return re.search(r'__version__ = "([^"]+)"', (SKILL / "scripts/orchestrator/__init__.py").read_text()).group(1)
 
 
 def _frontmatter(path):
@@ -49,16 +49,31 @@ def test_commands_have_descriptions_and_license_is_mit():
     for cmd in (ROOT / "commands").glob("*.md"):
         assert re.search(r"^description: .+", _frontmatter(cmd), re.M), cmd
     assert "MIT License" in (ROOT / "LICENSE").read_text()
-    for py in (SKILL / "kit/tools").rglob("*.py"):
-        assert any("SPDX-License-Identifier: MIT" in l for l in py.read_text().splitlines()[:2]), py
+    for py in (SKILL / "scripts").rglob("*.py"):
+        assert any("SPDX-License-Identifier: MIT" in line for line in py.read_text().splitlines()[:2]), py
 
 
 def test_example_project_is_valid():
     import sys
-    sys.path.insert(0, str(SKILL / "kit/tools"))
+    sys.path.insert(0, str(SKILL / "scripts"))
     from orchestrator import board
     from orchestrator.config import load
     cfg = load(ROOT / "examples/lunch-poll/orchestration.toml")
     rows = board.parse(cfg.board)
     assert board.validate(rows, cfg.id_pattern) == []
     assert [r.id for r in board.ready(rows)] == ["W0-2"]
+
+
+def test_bump_version_updates_every_field(tmp_path):
+    import shutil
+    import sys
+    sys.path.insert(0, str(ROOT / "tools"))
+    from bump_version import bump
+    copy = tmp_path / "repo"
+    shutil.copytree(ROOT, copy, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+    bump("9.9.9", copy)
+    text = "\n".join(p.read_text(encoding="utf-8") for p in [
+        copy / ".claude-plugin/plugin.json", copy / ".claude-plugin/marketplace.json", copy / ".codex-plugin/plugin.json",
+        copy / ".cursor-plugin/plugin.json", copy / "CITATION.cff", copy / "skills/build-orchestration-setup/SKILL.md",
+        copy / "skills/build-orchestration-setup/scripts/orchestrator/__init__.py"])
+    assert text.count("9.9.9") == 7 and _version_init() not in text

@@ -66,7 +66,7 @@ tier for trivial tasks / same as thinking. Any provider's most expensive tier: n
 
 ## Round 6 - Skills  (see `09-skills-and-cost-quality.md`)
 **6.1 What do you already have?** - scan installed skills and suggest (**recommended**; run
-`python <skill>/kit/tools/orch.py skills <repo>`) / I'll list them / nothing yet.
+`python <skill>/scripts/orch.py skills <repo>`) / I'll list them / nothing yet.
 **6.2 Do you know which task or topic needs which skill?** - yes, I'll describe it / partly - use my ideas and
 propose the rest (**recommended** when they have any) / no - propose everything.
 **6.3 How should the proposal be optimised?** - fewest skills that cover each task type at the best quality

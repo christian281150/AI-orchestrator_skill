@@ -88,18 +88,31 @@ This adds the skill and two commands: `/orchestrate` and `/build-status`.
 Download `build-orchestration-setup.zip` from the [latest release](https://github.com/christian281150/agent-build-orchestrator/releases/latest)
 and upload it in the app's skill settings. (No release yet? Zip the folder `skills/build-orchestration-setup/`.)
 
-### Codex, Cursor and other agents
-The repository ships `.codex-plugin/` and `.cursor-plugin/` manifests pointing at `./skills/`. Or copy
-`skills/build-orchestration-setup/` into the agent's skills folder (e.g. `~/.agents/skills/`). With the
-skills CLI:
+### Any agent - skills CLI
+The [skills CLI](https://github.com/vercel-labs/skills) installs into Claude Code, Codex, Cursor, Gemini CLI and
+other agents that read `SKILL.md` folders:
 ```bash
 npx skills add christian281150/agent-build-orchestrator
 ```
+Try it without installing:
+```bash
+npx skills use christian281150/agent-build-orchestrator@build-orchestration-setup | claude
+```
+
+### Codex, Cursor - plugin manifests or manual copy
+The repository ships `.codex-plugin/` and `.cursor-plugin/` manifests pointing at `./skills/`. Or copy
+`skills/build-orchestration-setup/` into the agent's skills folder (e.g. `~/.agents/skills/`).
 
 ### Toolkit only
 Python 3.11+, standard library only - no install step:
 ```bash
-python skills/build-orchestration-setup/kit/tools/orch.py -h
+python skills/build-orchestration-setup/scripts/orch.py -h
+```
+
+### Verify a release download
+Every release zip ships with `SHA256SUMS.txt` and a signed [build-provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations):
+```bash
+gh attestation verify build-orchestration-setup.zip -R christian281150/agent-build-orchestrator
 ```
 
 ## Usage
@@ -129,10 +142,12 @@ commands/                                        /orchestrate, /build-status
 skills/build-orchestration-setup/
   SKILL.md                                       the phases
   references/                                    the detail behind each phase (9 files)
-  kit/templates/                                 copied into your repo by `orch.py init`
-  kit/tools/orch.py                              the toolkit - Python stdlib only
+  scripts/orch.py                                the toolkit - Python stdlib only
+  assets/templates/                              copied into your repo by `orch.py init`
 examples/lunch-poll/                             a worked example
 tests/                                           pytest suite
+tools/bump_version.py                            maintainers: one command sets every version field
+AGENTS.md                                        rules for AI agents contributing to this repo
 ```
 
 **References**
@@ -222,12 +237,14 @@ deleting and credentials are *reserved actions*: agents prepare them and queue t
 
 ## Verified and not verified
 
-- **Verified by the test suite** (29 tests; run locally on Linux - the CI workflow runs them on Linux, macOS and Windows on every push): unit tests and end-to-end supervisor
+- **Verified by the test suite** (30 tests; CI runs them on Linux, macOS and Windows with Python 3.11 and 3.13): unit tests and end-to-end supervisor
   runs with stand-in providers - a limit hit, a build provider taking over, the gate in the next round, the STOP
   file, the stop after repeated failures - plus git hook controls, safe-commit during a merge, preflight going red,
-  the skills inventory, manifest validity, one version everywhere, the worked example.
-- **Verified by hand:** `claude plugin validate` passes for the marketplace and plugin manifests, and a
-  marketplace install from a local copy installs the skill and both commands.
+  the skills inventory, manifest validity, one version everywhere, the version-bump tool, the worked example.
+- **Verified in CI on every push:** `ruff` lint and the Agent Skills reference validator (`skills-ref validate`).
+- **Verified by hand:** `claude plugin validate` passes for the marketplace and plugin manifests; installing
+  from GitHub with `/plugin marketplace add` + `/plugin install` delivers the skill and both commands; the
+  skills CLI (`npx skills add ... --list`) discovers the skill.
 - **Not verified by the tests:** the real agent CLIs (their flags and usage-record formats change between
   versions - check each command in `orchestration.toml` against `<cli> --help`), the Codex and Cursor plugin
   manifests inside those apps, and the OS scheduler templates.

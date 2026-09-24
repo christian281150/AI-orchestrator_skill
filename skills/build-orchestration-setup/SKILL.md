@@ -5,7 +5,7 @@ license: MIT
 compatibility: Toolkit needs git and Python 3.11+ (standard library only). Works with any agent that loads SKILL.md folders; the unattended supervisor drives any CLI coding agent.
 metadata:
   author: christian281150
-  version: "1.2.1"
+  version: "1.3.0"
   repository: https://github.com/christian281150/agent-build-orchestrator
 ---
 
@@ -23,21 +23,25 @@ for any project type and any mix of AI coding tools:
 
 It does NOT write the idea, the spec or the architecture. It starts where those end.
 
+**Use it when** several AI agents (one tool or several) should build an app from an existing spec - in parallel,
+possibly unattended - and the owner wants control over scope, cost and what reaches main.
+**Don't use it** for a single small change, a one-file script, or before a spec exists (Phase 0 will stop you).
+
 Guiding principle for every proposal: **best quality at the lowest cost**. Use the cheapest adequate model per
 role, review depth by risk, the fewest skills that cover each task, plans before builds, and never pay twice.
 
 ## Kit and references
 This skill ships with a kit and reference files:
 - `references/01-spec-clarity.md` ... `09-skills-and-cost-quality.md`: the detail behind each phase.
-- `kit/templates/`: board, rules, coordinator prompt, engine-neutral roles, skills plan, ledgers, hooks,
+- `assets/templates/`: board, rules, coordinator prompt, engine-neutral roles, skills plan, ledgers, hooks,
   config and schedulers.
-- `kit/tools/orch.py`: a toolkit of standard-library Python 3.11+ commands:
+- `scripts/orch.py`: a toolkit of standard-library Python 3.11+ commands:
   - `init`, `unfilled`, `skills`, `preflight`
   - `supervise` (rounds and failover)
   - `board`, `check-not-done`, `safe-commit`
   - `redact`, `snapshot`, `live-view`
 
-If `references/` and `kit/` are not next to this file, get them from the public repository
+If `references/`, `scripts/` and `assets/` are not next to this file, get them from the public repository
 `https://github.com/christian281150/agent-build-orchestrator` (folder `skills/build-orchestration-setup/`), or ask
 the user where their copy is. If neither is possible, generate the files from this file and say so.
 
@@ -125,7 +129,7 @@ Show a one-screen summary of every answer plus the skills plan, then get one con
 ## Phase 3 - Workspace setup -> `references/03-workspace-setup.md`
 Order matters. The first three steps are cheap now and expensive later.
 1. Folder layout: the repo; lane worktrees in a sibling folder; run state and data outside the repo.
-2. Run `git init -b main`, then `python <skill>/kit/tools/orch.py init <repo> --name <app> --author-name ... --author-email ...`.
+2. Run `git init -b main`, then `python <skill>/scripts/orch.py init <repo> --name <app> --author-name ... --author-email ...`.
    `init` copies templates and tools, never overwrites, wires the hooks and sets the git author.
    `.gitattributes` must exist before the first hash.
 3. Credentials go in user-scope environment variables, typed by the owner and never in chat, one per identity.

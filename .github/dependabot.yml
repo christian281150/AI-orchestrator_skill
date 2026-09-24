@@ -3,3 +3,8 @@ updates:
   - package-ecosystem: github-actions
     directory: /
     schedule: {interval: monthly}
+    groups:
+      github-actions:            # one pull request per month for all action updates, instead of one each
+        patterns: ["*"]
+    commit-message:
+      prefix: "build(deps)"

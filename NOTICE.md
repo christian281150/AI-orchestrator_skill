@@ -4,7 +4,7 @@
 Licensed under the MIT License (see [LICENSE](LICENSE)).
 
 ## Third-party code
-None is bundled. The toolkit (`skills/build-orchestration-setup/kit/tools/`) uses the Python standard library
+None is bundled. The toolkit (`skills/build-orchestration-setup/scripts/`) uses the Python standard library
 only. The GitHub Actions workflows reference third-party actions by version; they run on GitHub, not in the
 distributed skill.
 

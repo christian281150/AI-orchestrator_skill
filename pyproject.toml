@@ -1,0 +1,11 @@
+# Tooling config only - the toolkit itself has no dependencies and is not a package.
+[tool.ruff]
+target-version = "py311"
+line-length = 130
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "B", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q -p no:cacheprovider"

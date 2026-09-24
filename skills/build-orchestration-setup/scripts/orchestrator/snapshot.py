@@ -34,7 +34,8 @@ def snapshot(cfg: Config, since: str = "24 hours ago") -> dict:
         "providers_limited": providers,
         "fallback_lanes": fallback,
         "blocked": [{"id": r.id, "on": r.next} for r in rows if r.status == "blocked"],
-        "in_progress": [{"id": r.id, "owner": r.owner, "lane": r.lane} for r in rows if r.status in ("in-progress", "planning", "review")],
+        "in_progress": [{"id": r.id, "owner": r.owner, "lane": r.lane}
+                        for r in rows if r.status in ("in-progress", "planning", "review")],
     }
 
 
@@ -50,7 +51,8 @@ def live_view(cfg: Config, out: Path, refresh_s: int = 30) -> Path:
     blocked = "".join(f"<li><b>{e(b['id'])}</b> - {e(b['on'])}</li>" for b in s["blocked"]) or "<li>none</li>"
     lim = "".join(f"<li>{e(k)} until {e(v.get('limited_until', ''))} - {e(v.get('reason', ''))}</li>"
                   for k, v in s["providers_limited"].items()) or "<li>none</li>"
-    fb = "".join(f"<li>{e(f['item'])} on {e(f['provider'])} ({e(f['branch'])})</li>" for f in s["fallback_lanes"]) or "<li>none</li>"
+    fb = "".join(f"<li>{e(f['item'])} on {e(f['provider'])} ({e(f['branch'])})</li>"
+                 for f in s["fallback_lanes"]) or "<li>none</li>"
     page = f"""<!doctype html><meta charset=utf-8><meta http-equiv=refresh content={refresh_s}>
 <title>{e(cfg.name)} live view</title>
 <style>body{{font:14px system-ui;margin:16px;max-width:900px;background:#fff;color:#111}}

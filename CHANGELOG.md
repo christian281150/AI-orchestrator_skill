@@ -3,6 +3,21 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 1.3.0 - 2026-09-24
+### Changed
+- Skill folder follows the Agent Skills layout: `scripts/` (toolkit, was `kit/tools/`) and `assets/templates/`
+  (was `kit/templates/`). `orch.py init` output in your repository is unchanged (`tools/` + templates).
+- Workflows: actions pinned to commit SHAs, least-privilege `permissions`, superseded runs cancelled.
+- Dependabot groups all action updates into one monthly pull request.
+### Added
+- CI: `ruff` lint, the Agent Skills reference validator (`skills-ref validate`), manifest JSON check, and a
+  test matrix of Python 3.11 and 3.13 on Linux, macOS and Windows.
+- Releases: `SHA256SUMS.txt` and a signed build-provenance attestation for the skill zip.
+- `AGENTS.md` (+ `CLAUDE.md` import) with contributor rules for AI agents working on this repository.
+- `tools/bump_version.py` - one command sets the version in every manifest, the skill, the toolkit and CITATION.
+- `pyproject.toml` with ruff and pytest settings (tooling only; the toolkit stays dependency-free).
+- README: `npx skills` install and use-without-installing, release verification (checksum + attestation).
+
 ## 1.2.1 - 2026-09-24
 ### Changed
 - Test fixtures no longer contain secret-looking literals: fake IP (documentation range), email (reserved

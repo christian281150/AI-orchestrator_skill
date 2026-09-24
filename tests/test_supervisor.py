@@ -72,7 +72,8 @@ max_parallel = 2
 
 def test_ok_round(repo, tmp_path):
     cfg = setup(repo, tmp_path, "ok")
-    assert supervisor.supervise(str(repo / "orchestration.toml"), max_passes=1, sleep=lambda s: None, reexec=False) == "max-passes"
+    result = supervisor.supervise(str(repo / "orchestration.toml"), max_passes=1, sleep=lambda s: None, reexec=False)
+    assert result == "max-passes"
     state = json.loads((cfg.state_dir / "supervisor-state.json").read_text())
     assert state["state"] == "between rounds" and state["last"] == "ok"
 

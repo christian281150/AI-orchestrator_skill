@@ -67,7 +67,7 @@ def parse(path: str | Path) -> list[Row]:
             continue
         if all(set(c) <= set("-: ") for c in cells):
             continue           # separator row
-        rec = dict(zip(header, cells))
+        rec = dict(zip(header, cells, strict=False))   # short rows are allowed
         est_raw = rec.get("est", "").replace(",", ".")
         try:
             est = float(re.findall(r"[\d.]+", est_raw)[0]) if est_raw else 0.0

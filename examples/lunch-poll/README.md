@@ -17,6 +17,6 @@ until 11:30, the result is posted to the team chat.
 
 Try the toolkit against it (from the repository root):
 ```bash
-python skills/build-orchestration-setup/kit/tools/orch.py --config examples/lunch-poll/orchestration.toml board ready
-python skills/build-orchestration-setup/kit/tools/orch.py --config examples/lunch-poll/orchestration.toml board metrics
+python skills/build-orchestration-setup/scripts/orch.py --config examples/lunch-poll/orchestration.toml board ready
+python skills/build-orchestration-setup/scripts/orch.py --config examples/lunch-poll/orchestration.toml board metrics
 ```
