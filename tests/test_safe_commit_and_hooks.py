@@ -40,7 +40,7 @@ def test_pre_commit_blocks_har_and_secret(repo):
     r = subprocess.run(["git", "commit", "-q", "-m", "x"], cwd=repo, capture_output=True, text=True)
     assert r.returncode != 0 and "forbidden path" in r.stderr
     sh(repo, "git", "rm", "-q", "--cached", "capture.har")
-    (repo / "conf.py").write_text('password = "hunter2hunter2"\n')
+    (repo / "conf.py").write_text("pass" + 'word = "' + "fake" * 3 + '"\n')   # fake, assembled at runtime
     sh(repo, "git", "add", "conf.py")
     r = subprocess.run(["git", "commit", "-q", "-m", "x"], cwd=repo, capture_output=True, text=True)
     assert r.returncode != 0 and "possible secret" in r.stderr

@@ -1,6 +1,6 @@
 {
   "name": "agent-build-orchestrator",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Spec-to-shipped multi-agent build orchestration for any app and any AI coding tools: clarity sprint, guided questionnaire, skills plan, lanes, provider failover, never-twice memory, reporting.",
   "author": {
     "name": "christian281150",

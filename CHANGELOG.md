@@ -3,6 +3,11 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 1.2.1 - 2026-09-24
+### Changed
+- Test fixtures no longer contain secret-looking literals: fake IP (documentation range), email (reserved
+  `.test` domain), API key and password are assembled at runtime, so secret scanners do not flag the repository.
+
 ## 1.2.0 - 2026-09-24
 ### Added
 - Installable plugin: `.claude-plugin/` (plugin + marketplace), `.codex-plugin/`, `.cursor-plugin/` manifests;

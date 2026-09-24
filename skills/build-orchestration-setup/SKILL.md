@@ -5,7 +5,7 @@ license: MIT
 compatibility: Toolkit needs git and Python 3.11+ (standard library only). Works with any agent that loads SKILL.md folders; the unattended supervisor drives any CLI coding agent.
 metadata:
   author: christian281150
-  version: "1.2.0"
+  version: "1.2.1"
   repository: https://github.com/christian281150/agent-build-orchestrator
 ---
 
