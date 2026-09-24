@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- macOS launchd agent for the keeper (every 600 s). Edit REPO, copy to ~/Library/LaunchAgents/,
+     then: launchctl load ~/Library/LaunchAgents/com.agentbuild.{{PROJECT_NAME}}.keeper.plist -->
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.agentbuild.{{PROJECT_NAME}}.keeper</string>
+  <key>ProgramArguments</key><array>
+    <string>/usr/bin/env</string><string>python3</string><string>tools/orch.py</string>
+    <string>--config</string><string>orchestration.toml</string><string>keeper</string>
+  </array>
+  <key>WorkingDirectory</key><string>REPO</string>
+  <key>StartInterval</key><integer>600</integer>
+</dict></plist>

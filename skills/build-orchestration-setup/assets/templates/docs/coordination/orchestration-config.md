@@ -12,6 +12,7 @@ is a decision -> log it in `decisions-log.md` and update `orchestration.toml` in
 | 2.1 | Execution home | | | |
 | 2.2 | Machine and shell | | | |
 | 2.3 | Human involvement | | | |
+| 2.4 | Adoption level (1-4) | | | |
 | 3.1 | Tools and subscriptions | | | |
 | 3.2 | Lead provider | | | |
 | 3.3 | Build providers | | | |
@@ -32,6 +33,10 @@ is a decision -> log it in `decisions-log.md` and update `orchestration.toml` in
 | 7.2 | Fallback order | | | |
 | 7.3 | Automatic restart | | | |
 | 7.4 | Chat-only models | | | |
+| 7b.1 | Tool routing (default / adjusted rows) | | | |
+| 7b.2 | Cloud planners | | | |
+| 7b.3 | Idle build providers plan safe items | | | |
+| 7b.4 | Keeper | | | |
 | 8.1 | Autonomy | | | |
 | 8.2 | Reserved for the owner | | | |
 | 8.3 | Git model | | | |

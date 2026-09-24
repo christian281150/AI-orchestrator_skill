@@ -1,10 +1,11 @@
 # Spec readiness - {{PROJECT_NAME}}
 
-Filled in the clarity phase, BEFORE any orchestration is configured. Every hour spent here saves several
-hours of agents building the wrong thing, re-asking the owner at 3 a.m., or redoing work.
+Filled in Phase 1 (readiness gate), BEFORE any orchestration is configured. This is a **check**, not spec
+work: it scores whether the settled spec and architecture are ready to be built. Gaps in *what* to build go back
+to the owner's own spec process; the orchestration starts when they are closed.
 
 Score each line 0 (missing) / 1 (partly, or only in someone's head) / 2 (written, specific, testable).
-**Gate: every P1 line scores 2, the total is at least 80% of the maximum, and "Open questions" is empty for P1.**
+**Gate: every P1 line scores 2, the total is at least 80% of the maximum, and the gap list holds no P1 entry.**
 
 | # | Dimension | Question it answers | Score | Where written |
 |---|---|---|---|---|
@@ -21,19 +22,18 @@ Score each line 0 (missing) / 1 (partly, or only in someone's head) / 2 (written
 | 11 | Deadlines and demo | Dates that matter; a demo/synthetic mode vs live mode | | |
 | 12 | Non-functional | Users at once, response times, backup/restore, uptime expectations | | |
 
-## Decisions to make now (each one, left open, stops the build later)
-- Authentication approach, and the fallback if it slips
-- Hosting and network path (and: access policy before the service is reachable)
-- Database: managed or self-hosted; migration numbering; who applies to live
+## Build-time decisions to settle now (how to build - not what)
+- Who applies database migrations to live, and how they are numbered
+- Sequencing of anything reachable from outside (access policy before the endpoint)
 - Identity the app and loads run as (attribution is forever)
 - Naming: project, lanes, branch pattern, item IDs
 - Test data: synthetic generator, where fixtures live
 - What "missing" looks like in the UI (never rendered as zero)
 - Which third-party data may never be committed or sent to an AI provider
 
-## Open questions (must be empty for every P1 item before the gate)
+## Gap list (returned to the owner's spec work - must hold no P1 entry before the gate)
 
-| # | Question | Blocks (IDs) | Owner's answer | Date |
+| # | What is missing | Blocks (features) | What would make it a 2 | Closed on |
 |---|---|---|---|---|
 
 ## Assumptions accepted (non-P1 gaps we build around - each is a logged decision)

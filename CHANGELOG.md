@@ -3,6 +3,31 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 1.4.0 - 2026-09-24
+### Changed
+- **Repository renamed to `AI-orchestrator_skill`**; plugin and marketplace are now `ai-orchestrator`
+  (`/plugin install ai-orchestrator@ai-orchestrator`). Old GitHub links redirect; reinstall the plugin once.
+- **Positioning made explicit:** the skill orchestrates the *build* of a settled spec and never writes, refines or
+  aligns specs. Phase 1 is now a **readiness gate** (a check that returns a gap list), reference renamed to
+  `01-readiness-gate.md`; the old "clarity sprint" is gone.
+- README rewritten for visibility: "Get the skill" table up front, adoption levels, which-tool-when, personal note.
+### Added
+- **Which tool when:** `references/10-tool-routing.md` and questionnaire round 7b - lead provider, build
+  providers, cloud sessions, chat desks, supervisor, keeper, and the owner, each on the work it does best.
+- **Keeper** (`orch.py keeper`, scheduled every ~10 min): restarts limit-stopped lanes (capped per day), build
+  lanes when no round runs, idle planning of safe items by build providers, cloud planners with steady /
+  accelerate / handback rules and a credit floor. Scheduler templates for Windows, systemd and launchd.
+- **Knowledge-gap reconciliation** (`orch.py gap`, also injected into every round prompt): work the lead did not
+  see, `REVIEWERS=<n>`, and for foreign plans a gap summary, a blind lead re-plan and an arbiter's ruling.
+  Plans carry `Authored-by:`.
+- Provider `kind` (local / cloud / chat), `plan_command`, `usage_command` (JSON usage meter), `restart_max_per_day`.
+- **Adoption levels 1-4** in the skill, README and questionnaire.
+- Discussions: category forms for *Show and tell* ("I tried it"), *Ideas*, *Q&A*; the issue chooser links there.
+- Lessons 39-45 (build-provider burn rate, cloud planners, foreign plans, pushing for cloud sessions, plans only in
+  the repository, keeping spec work out of the build, argument splitting).
+### Fixed
+- The supervisor no longer sees its own finished child processes as still running (zombie reaping).
+
 ## 1.3.0 - 2026-09-24
 ### Changed
 - Skill folder follows the Agent Skills layout: `scripts/` (toolkit, was `kit/tools/`) and `assets/templates/`

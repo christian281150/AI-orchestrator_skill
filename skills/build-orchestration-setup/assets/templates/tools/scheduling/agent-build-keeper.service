@@ -1,0 +1,11 @@
+# systemd user service + timer (Linux) for the keeper - a short pass every 10 minutes.
+#   cp tools/scheduling/agent-build-keeper.* ~/.config/systemd/user/
+#   edit WorkingDirectory, then: systemctl --user daemon-reload && systemctl --user enable --now agent-build-keeper.timer
+[Unit]
+Description={{PROJECT_NAME}} keeper pass
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/src/{{PROJECT_NAME}}
+ExecStart=/usr/bin/env python3 tools/orch.py --config orchestration.toml keeper
+Environment=PYTHONIOENCODING=utf-8

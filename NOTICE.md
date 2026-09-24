@@ -1,6 +1,6 @@
 # Notice
 
-**agent-build-orchestrator** - Copyright (c) 2026 christian281150 and contributors.
+**AI-orchestrator_skill** - Copyright (c) 2026 christian281150 and contributors.
 Licensed under the MIT License (see [LICENSE](LICENSE)).
 
 ## Third-party code

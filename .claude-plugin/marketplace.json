@@ -1,15 +1,15 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
-  "name": "agent-build-orchestrator",
-  "description": "Marketplace for the agent-build-orchestrator plugin",
+  "name": "ai-orchestrator",
+  "description": "Marketplace for AI-orchestrator_skill",
   "owner": {
     "name": "christian281150"
   },
   "plugins": [
     {
-      "name": "agent-build-orchestrator",
-      "description": "Spec-to-shipped multi-agent build orchestration for any app and any AI coding tools: clarity sprint, guided questionnaire, skills plan, lanes, provider failover, never-twice memory, reporting.",
-      "version": "1.3.0",
+      "name": "ai-orchestrator",
+      "description": "Orchestrates the BUILD once idea, spec and architecture are settled (not a spec tool): readiness gate, guided setup questionnaire, skills plan, parallel lanes across AI tools, one merge gate, provider failover, never-twice memory, reporting.",
+      "version": "1.4.0",
       "source": "./",
       "author": {
         "name": "christian281150",

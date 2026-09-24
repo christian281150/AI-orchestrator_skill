@@ -9,7 +9,8 @@ import subprocess
 from pathlib import Path
 
 SKILL_ROOT = Path(__file__).resolve().parents[2]      # skills/build-orchestration-setup
-TEXT_SUFFIXES = {".md", ".toml", ".json", ".py", ".txt", ".yml", ".yaml", ".sh", ".service", ".plist", ".ps1", ".cmd", ".bat", ""}
+TEXT_SUFFIXES = {".md", ".toml", ".json", ".py", ".txt", ".yml", ".yaml", ".sh", ".service", ".timer",
+                 ".plist", ".ps1", ".cmd", ".bat", ""}
 CRLF_SUFFIXES = {".ps1", ".cmd", ".bat"}   # Windows shells; everything else LF
 
 

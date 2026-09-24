@@ -7,7 +7,7 @@ Guidance for AI coding agents (Claude Code, Codex, Cursor, Gemini, ...) that cha
 ```
 skills/build-orchestration-setup/   the skill - follows the Agent Skills spec (agentskills.io/specification)
   SKILL.md                          lean: phases + pointers; keep under 500 lines / ~5k tokens
-  references/NN-topic.md            detail, loaded on demand; one level deep from SKILL.md
+  references/NN-topic.md            detail (01 readiness gate ... 10 tool routing), loaded on demand
   scripts/                          orch.py + orchestrator/ - Python 3.11+ standard library ONLY
   assets/templates/                 files `orch.py init` copies into a user's repository
 commands/                           Claude Code slash commands (markdown + frontmatter)
@@ -26,6 +26,8 @@ python tools/bump_version.py 1.4.0                 # bump every version field at
 ```
 
 ## Rules
+0. **Scope:** this skill orchestrates the *build* of a settled spec. Never add features that write, refine or
+   align specs - that belongs before this skill.
 1. **Stdlib only** in `scripts/`. No dependency may be added.
 2. **Provider-neutral.** No text or code may assume one AI vendor. Vendor specifics live in example config and
    clearly marked readers, with the CLI version they were verified against.

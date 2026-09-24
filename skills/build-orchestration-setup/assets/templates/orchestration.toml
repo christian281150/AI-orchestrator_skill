@@ -36,7 +36,19 @@ forbid_paths = ["*.har", "*.pem", "*.key", ".env", ".env.*", "data/**", "secrets
 required_env = []             # names only, e.g. ["DB_PASSWORD_APP"]; values are never printed
 redact_terms = []             # your server names, domains, client names - blocked from commits and outgoing prompts
 
+[keeper]                      # `orch.py keeper`, run by the OS scheduler every interval_minutes
+interval_minutes = 10
+queue_low_watermark = 5       # approved plans waiting; below this, planners are topped up
+cloud_steady = 1              # cloud planners while the lead provider has capacity
+cloud_accelerate_max = 3      # cloud sessions in total once the lead provider is limited
+handback_below_pct = 50       # lead usage (5-hour) back below this -> extra cloud sessions hand back
+cloud_credit_floor = 5        # never launch a cloud session below this credit
+idle_planning = true          # an idle build provider may plan one safe open item (lead reconciles it)
+unsafe_lanes = ["db", "infra", "security"]   # never auto-planned by a non-lead provider
+
 # ---------------------------------------------------------------- providers
+# kind: local (CLI on this machine) | cloud (remote sessions, usually a separate credit) | chat (copy-paste desk)
+# usage_command: optional; must print JSON like {"five_hour_pct": 42, "weekly_pct": 10, "credit_left": 233.5}
 # Provider-neutral: add any CLI agent. priority: lower = preferred. roles: coordinator | plan | review | build | merge
 # The examples below (Claude lead, Codex + Gemini builders) are one setup; replace them with the owner's tools.
 # {prompt_file} {round_id} ({prompt} = full text) in round_command; {brief_file} ({brief} = full text) {worktree} {item} {branch} in build_command.
@@ -60,6 +72,7 @@ name = "codex"
 priority = 2
 roles = ["build"]                                        # builds approved plans only; never merges
 build_command = ["codex", "exec", "--cd", "{worktree}", "--full-auto", "Read {brief_file} completely and carry it out on branch {branch}."]
+plan_command = ["codex", "exec", "--cd", "{worktree}", "--full-auto", "Plan item {item} only: write docs/coordination/ledgers/{item}/plan.md (first line: Authored-by: codex) and build-brief.md on branch {branch}. Do not implement."]
 native_limit = "codex_rollout"                           # its own usage record decides, not log text
 native_limit_threshold = 97
 max_parallel = 5
@@ -73,3 +86,13 @@ roles = ["build"]
 build_command = ["gemini", "-p", "Read {brief_file} completely and carry it out in {worktree} on branch {branch}."]
 limit_patterns = ["quota exceeded", "rate limit"]
 max_parallel = 2
+
+[[providers]]
+name = "cloud"
+kind = "cloud"                                           # remote sessions on their own credit - planning only
+priority = 4
+enabled = false                                          # turn on once the git host is connected to the cloud service
+roles = ["plan"]
+plan_command = ["claude", "--cloud", "Plan these board items, one ledger each (first line of plan.md: Authored-by: cloud): {todo}. Check docs/coordination/cloud-handback.txt before each item; if it says HANDBACK, finish the current item and stop."]
+usage_command = []                                       # e.g. a script printing {"credit_left": 233.5}
+max_parallel = 3

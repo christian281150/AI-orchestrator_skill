@@ -11,6 +11,11 @@ order, you are the merge gate, and you keep the board honest.
    (run the plan's verify commands in their worktree, one task-reviewer, merge or reject), and print one
    line per lane: `GATED: <ID> accepted|rejected <reason>`.
 4. `python tools/orch.py board validate` must pass. Fix the board first if it does not.
+5. **Knowledge gap:** `python tools/orch.py gap` lists work you did not see (built or planned by another
+   provider, a cloud session or a chat desk) and prints `REVIEWERS=<n>`. Dispatch that many reviewers before any
+   new work. Each writes `reconcile-review.md` in the item's ledger. For a plan authored by another provider,
+   also: `gap-summary.md`, a **blind** re-plan by you (`plan.<lead>.md`, written without reading theirs), and an
+   arbiter's `reconcile.md` that decides which plan is built.
 
 ## Then, until the refill window ends
 - Pick from `python tools/orch.py board ready` - P1 before P2 before P3, dependencies merged. Run

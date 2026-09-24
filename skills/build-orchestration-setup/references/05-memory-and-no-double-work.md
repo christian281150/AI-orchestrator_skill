@@ -14,7 +14,7 @@ because the state lived in a context window that ended. This file is the system 
 | `ledgers/<ID>/` | one item's plan, reviews, task progress | the item's lead | continue from it, never restart |
 | `HANDOVER-<n>.md` | what was running, what changed, what waits on the owner | the session that ends | newest wins |
 | `RULES.md`, agent files, `SESSION-PROMPT.md` | how to work | owner + monitoring session | re-read every round |
-| Spec, `SCOPE.md`, architecture | what to build, in what order | clarity phase | design intent |
+| Spec, architecture (settled before this skill) + `SCOPE.md` | what to build, in what order | the owner; build order at the readiness gate | design intent |
 | claude.ai Project + memory | how the owner wants to be worked with; the handovers | chat sessions | never status |
 
 **Status never lives in a document.** A status line anywhere but the board is a timestamped measurement,

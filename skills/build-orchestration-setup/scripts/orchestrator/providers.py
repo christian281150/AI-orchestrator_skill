@@ -119,6 +119,27 @@ def detect_limit(p: Provider, exit_code: int | None, log_text: str, now: datetim
     return LimitVerdict(False, "no limit signal")
 
 
+def usage(p: Provider, cwd: Path | None = None) -> dict:
+    """Run the provider's usage_command (if any) and return its JSON, e.g.
+    {"five_hour_pct": 42, "weekly_pct": 10, "credit_left": 233.5}. {} when unknown."""
+    if not p.usage_command:
+        return {}
+    try:
+        r = subprocess.run(p.usage_command, capture_output=True, cwd=cwd, timeout=60)
+        data = json.loads(r.stdout.decode("utf-8", "replace") or "{}")
+        return data if isinstance(data, dict) else {}
+    except (OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
+        return {}
+
+
+def over_threshold(p: Provider, u: dict) -> str:
+    for key in ("five_hour_pct", "weekly_pct"):
+        v = u.get(key)
+        if isinstance(v, (int, float)) and v >= p.native_limit_threshold:
+            return f"usage meter {key}={v:.0f}%"
+    return ""
+
+
 class ProviderState:
     """limited_until per provider, persisted in <state_dir>/providers.json."""
 
@@ -169,6 +190,10 @@ class ProviderState:
             if used is not None and used >= p.native_limit_threshold:
                 self.mark_limited(p.name, None, f"native record {used:.0f}%", now)
                 return False
+        reason = over_threshold(p, usage(p, self.cfg.root))
+        if reason:
+            self.mark_limited(p.name, None, reason, now)
+            return False
         return True
 
     def earliest_reset(self, now: datetime | None = None) -> datetime | None:

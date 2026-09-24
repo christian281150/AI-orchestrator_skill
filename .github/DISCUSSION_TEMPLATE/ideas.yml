@@ -1,0 +1,10 @@
+labels: ["idea"]
+body:
+  - type: textarea
+    attributes: {label: The idea, description: "What should the skill do differently or additionally?"}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Why, description: "What problem does it solve - ideally from a build you ran"}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: Adoption level and tools it applies to}

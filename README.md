@@ -1,269 +1,216 @@
 <div align="center">
 
-# Agent Build Orchestrator
+# AI Orchestrator Skill
 
-**From finished spec to shipped code with a team of AI agents - without the rework, the lost state, or the 3 a.m. questions.**
+**Your spec is done. Now build it with a team of AI agents - without the rework, the lost state, or the 3 a.m. questions.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![tests](https://github.com/christian281150/agent-build-orchestrator/actions/workflows/tests.yml/badge.svg)](https://github.com/christian281150/agent-build-orchestrator/actions/workflows/tests.yml)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
+[![tests](https://github.com/christian281150/AI-orchestrator_skill/actions/workflows/tests.yml/badge.svg)](https://github.com/christian281150/AI-orchestrator_skill/actions/workflows/tests.yml)
 [![Agent Skills](https://img.shields.io/badge/Agent%20Skills-SKILL.md-8A2BE2.svg)](https://agentskills.io/specification)
-[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757.svg)](#claude-code)
+[![Claude Code plugin](https://img.shields.io/badge/Claude%20Code-plugin-D97757.svg)](#get-the-skill)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![Zero dependencies](https://img.shields.io/badge/dependencies-0-brightgreen.svg)](#whats-inside)
+[![Discussions](https://img.shields.io/badge/feedback-Discussions-blue.svg)](https://github.com/christian281150/AI-orchestrator_skill/discussions)
 
-```text
-/plugin marketplace add christian281150/agent-build-orchestrator
-/plugin install agent-build-orchestrator@agent-build-orchestrator
-```
+**[Get the skill](#get-the-skill)** · [How it works](#how-it-works) · [Which tool when](#which-tool-when) · [A personal note](#a-personal-note) · [Give feedback](https://github.com/christian281150/AI-orchestrator_skill/discussions)
 
 </div>
 
 ---
 
+> [!IMPORTANT]
+> **This is not a tool to work out your spec.** It starts when the **idea, the functional spec (features and
+> acceptance criteria) and the architecture are settled**. It never writes, refines or aligns them - if they have
+> gaps, it stops and hands you a gap list for your own spec work. What it does is everything after that: **the
+> build.**
+
 AI coding agents are fast. Running **many** of them on one real app is where it falls apart:
 
 - they **forget** - every session, round and subagent starts from whatever was written down
 - they **redo work** - two lanes build the same thing, or a new session restarts a half-done item
-- they **guess** - every gap in the spec becomes wrong code, or a question to you at 3 a.m.
+- they **guess** - every gap becomes wrong code, or a question to you at 3 a.m.
 - they **stall** - the first usage limit stops the whole build until someone notices
+- each tool is used for **everything**, instead of for what it does best at the lowest cost
 - and **you** become the bottleneck, answering questions one at a time
 
-**Agent Build Orchestrator** is a skill plus a zero-dependency toolkit that fixes this. It first makes your spec
-buildable, then walks you through how you want the build to run, then sets up and runs it: parallel lanes, one
-merge gate, automatic failover between providers, and reporting you can read without asking.
+This repository is a **skill** (the [`build-orchestration-setup`](skills/build-orchestration-setup/SKILL.md)
+folder, in the open [Agent Skills](https://agentskills.io/specification) format) plus a **zero-dependency
+toolkit**. It checks your settled spec is ready to build, walks you through *how* you want to build it (tools,
+lanes, models, skills), sets everything up and runs it: parallel lanes, one merge gate, each AI tool on the work
+it does best, automatic failover on usage limits, and reporting you can read without asking.
 
-It came out of a real multi-week build: up to **10 parallel lead lanes on one provider plus build lanes on a
-second**, running unattended on one PC. Every rule in it paid for itself at least once - the
-[38 lessons](skills/build-orchestration-setup/references/08-lessons-learned.md) are included.
+It comes out of a real multi-week build - up to **10 parallel lead lanes plus build lanes on a second AI
+provider, cloud planners and a keeper process**, running unattended on one PC. Every rule in it paid for itself
+at least once; the [45 lessons](skills/build-orchestration-setup/references/08-lessons-learned.md) are included.
 
-## Contents
-- [How it works](#how-it-works)
-- [Install](#install)
-- [Usage](#usage)
-- [What's inside](#whats-inside)
-- [Failover: the build never just stops](#failover-the-build-never-just-stops)
-- [Philosophy](#philosophy)
-- [Compatibility](#compatibility)
-- [FAQ](#faq)
-- [Verified and not verified](#verified-and-not-verified)
-- [Contributing](#contributing) · [Security](#security) · [License](#license)
+## Get the skill
+
+| Where you work | How |
+|---|---|
+| **Claude Code** | `/plugin marketplace add christian281150/AI-orchestrator_skill` then `/plugin install ai-orchestrator@ai-orchestrator` - adds the skill plus `/orchestrate` and `/build-status` |
+| **Claude apps** (claude.ai, desktop, Cowork) | download `build-orchestration-setup.zip` from the [latest release](https://github.com/christian281150/AI-orchestrator_skill/releases/latest) and upload it in the app's skill settings |
+| **Any agent** (Codex, Cursor, Gemini CLI, ...) | `npx skills add christian281150/AI-orchestrator_skill` ([skills CLI](https://github.com/vercel-labs/skills)) |
+| **Try without installing** | `npx skills use christian281150/AI-orchestrator_skill@build-orchestration-setup \| claude` |
+| **Manual** | copy [`skills/build-orchestration-setup/`](skills/build-orchestration-setup) into your agent's skills folder |
+
+Then, in a repository that already holds your spec and architecture:
+```text
+/orchestrate docs/
+```
+or just say: *"My spec and architecture are in docs/ - set up the build orchestration."*
 
 ## How it works
 
 ```mermaid
 flowchart LR
-    A[Idea + spec + architecture] --> G{Gate}
-    G -- missing --> D[Dictate it, turn it into docs]
-    D --> G
-    G -- ok --> C[1 Clarity sprint<br/>P1 / P2 / P3, acceptance criteria]
-    C --> Q[2 Questionnaire + skills plan<br/>9 short rounds]
-    Q --> W[3 Workspace<br/>git, hooks, credentials, tools]
+    S[Your spec work<br/>idea, spec, architecture] --> G{0 Settled?}
+    G -- no --> S
+    G -- yes --> R{1 Readiness gate<br/>check only}
+    R -- gaps --> S
+    R -- ready --> Q[2 Questionnaire<br/>how to build: tools, lanes,<br/>models, skills, routing]
+    Q --> W[3 Workspace]
     W --> K[4-5 Kit + board<br/>roles, rules, waves]
-    K --> P[6 Preflight<br/>every check can go red]
-    P --> R[7 Run<br/>lanes, one merge gate, failover]
-    R --> S[8 Report<br/>board, dashboard, handovers]
+    K --> P[6 Preflight]
+    P --> B[7 Build<br/>lanes, one merge gate,<br/>failover, keeper]
+    B --> T[8 Report]
 ```
 
 | Phase | What you get |
 |---|---|
-| **0 Gate** | Refuses to start without idea, spec and architecture. Offers to take them by dictation. |
-| **1 Clarity sprint** | Readiness scorecard, ambiguity hunt (one question at a time, with a recommendation), **P1 / P2 / P3** + a written *not-in-v1* list, given/when/then criteria for every must-have, decisions made up front. |
-| **2 Questionnaire** | Nine short rounds: project and people, where it runs, which tools lead and which build, scale, cost vs quality, **skills** (scan what's installed, use your ideas, propose the rest), limits and failover, guardrails, reporting. |
-| **3 Workspace** | Folder layout, line endings and hooks before the first commit, credentials as environment variables, tools checked against their `--help`, a separate test database, schedulers. |
-| **4-5 Kit + board** | Board, rules, coordinator prompt, engine-neutral roles rendered per tool, skills plan, ledgers, config. Work broken into waves with estimates, dependencies and risk tiers. |
-| **6 Prove it** | `preflight` - each check shown going red on a broken input - plus one dry round. |
-| **7 Run** | Unattended rounds: parallel lanes, one merge gate, provider failover, automatic restart. |
+| **0 Prerequisites** | Stops unless idea, spec and architecture exist and are settled. |
+| **1 Readiness gate** | A *check*, not spec work: a 12-point scorecard, a gap list handed back to you if anything is missing, and the **build order** (P1 / P2 / P3, not-in-v1). |
+| **2 Questionnaire** | Ten short rounds about *how* to build: project and people, where it runs, **adoption level**, which tools lead and which build, scale, cost vs quality, **skills** (scan what's installed, use your ideas, propose the rest), limits and failover, **which tool does what**, guardrails, reporting. |
+| **3 Workspace** | Folders, git with line endings and hooks before the first commit, credentials as environment variables, tools checked against their `--help`, a separate test database, schedulers. |
+| **4-5 Kit + board** | Board, rules, coordinator prompt, engine-neutral roles, skills plan, ledgers, config; work in waves with estimates, dependencies and risk tiers. |
+| **6 Prove it** | `preflight` - every check shown going red on a broken input - plus one dry round. |
+| **7 Build** | Rounds with parallel lanes and one merge gate; a keeper every ~10 min; reconciliation of work the lead didn't see. |
 | **8 Report** | P1 progress headline, board, decisions log, dashboard, handovers, one batch of decisions for you. |
 
-## Install
+## Adapt it to your build
 
-### Claude Code
-```text
-/plugin marketplace add christian281150/agent-build-orchestrator
-/plugin install agent-build-orchestrator@agent-build-orchestrator
-```
-This adds the skill and two commands: `/orchestrate` and `/build-status`.
+Everything beyond level 1 is optional. The skill recommends the lowest level that fits.
 
-### Claude apps (claude.ai, desktop, Cowork)
-Download `build-orchestration-setup.zip` from the [latest release](https://github.com/christian281150/agent-build-orchestrator/releases/latest)
-and upload it in the app's skill settings. (No release yet? Zip the folder `skills/build-orchestration-setup/`.)
+| Level | What runs | Fits |
+|---|---|---|
+| **1 Rituals** | board, decisions log, ledgers, handovers, rules, roles - agents in one chat or CLI session | small builds, a first try |
+| **2 Unattended** | + supervisor (rounds, restart, STOP file), git hooks, preflight | one provider, runs while you're away |
+| **3 Multi-provider** | + build providers, failover, knowledge-gap reconciliation | two or more AI subscriptions |
+| **4 Full** | + keeper every ~10 min, cloud planners, idle planning, dashboard | long builds, maximum throughput |
 
-### Any agent - skills CLI
-The [skills CLI](https://github.com/vercel-labs/skills) installs into Claude Code, Codex, Cursor, Gemini CLI and
-other agents that read `SKILL.md` folders:
-```bash
-npx skills add christian281150/agent-build-orchestrator
-```
-Try it without installing:
-```bash
-npx skills use christian281150/agent-build-orchestrator@build-orchestration-setup | claude
-```
+Every tool name in the templates is an example. Swap in your own: any CLI agent can be the lead provider or a
+build provider in `orchestration.toml`.
 
-### Codex, Cursor - plugin manifests or manual copy
-The repository ships `.codex-plugin/` and `.cursor-plugin/` manifests pointing at `./skills/`. Or copy
-`skills/build-orchestration-setup/` into the agent's skills folder (e.g. `~/.agents/skills/`).
+## Which tool when
 
-### Toolkit only
-Python 3.11+, standard library only - no install step:
-```bash
-python skills/build-orchestration-setup/scripts/orch.py -h
-```
+The routing the skill proposes (the full table is in [`10-tool-routing.md`](skills/build-orchestration-setup/references/10-tool-routing.md)):
 
-### Verify a release download
-Every release zip ships with `SHA256SUMS.txt` and a signed [build-provenance attestation](https://docs.github.com/en/actions/security-for-github-actions/using-artifact-attestations):
-```bash
-gh attestation verify build-orchestration-setup.zip -R christian281150/agent-build-orchestrator
-```
+| Work | Goes to | Why |
+|---|---|---|
+| Deciding scope, features, architecture | **you - before this skill** | the build executes decisions; it doesn't make them |
+| Coordinating, reviewing, merging, arbitrating | the **lead provider**, top model tier | one gate sees everything that reaches main |
+| Planning | the lead's planner; **cloud sessions** when the lead is busy or limited; an **idle build provider** for safe items | plans are cheap, wrong builds are not |
+| Implementing approved plans, easier work, fixes | **build providers**, cheaper tier | saves the lead's allowance for judgment |
+| Security, auth, money, data, anything live | the lead, top tier, adversarial review | risk tier 3 is never delegated |
+| Needs your machine (local DB, secrets, LAN) | local tools only | cloud sessions can't see it |
+| Keeping it all running | supervisor + **keeper** (OS scheduler) | no human restarting things at night |
+| Writes to live, money, publishing, deleting | **you** | reserved actions |
 
-## Usage
-
-```text
-/orchestrate docs/
-```
-or just say: *"Set up the build orchestration for my app - the spec is in docs/."*
-
-The skill checks your documents, runs the clarity sprint, asks its questions (each with a recommended answer),
-generates the kit into your repository and proves the setup before anything runs unattended. Later:
-
-```text
-/build-status
-```
-reads the board, the decisions log and the supervisor state and tells you where the build stands and what is
-waiting on you.
-
-See [`examples/lunch-poll`](examples/lunch-poll) for a filled-in setup: scope, questionnaire answers, skills
-plan, provider config and the first board.
-
-## What's inside
-
-```text
-.claude-plugin/ .codex-plugin/ .cursor-plugin/   plugin manifests
-commands/                                        /orchestrate, /build-status
-skills/build-orchestration-setup/
-  SKILL.md                                       the phases
-  references/                                    the detail behind each phase (9 files)
-  scripts/orch.py                                the toolkit - Python stdlib only
-  assets/templates/                              copied into your repo by `orch.py init`
-examples/lunch-poll/                             a worked example
-tests/                                           pytest suite
-tools/bump_version.py                            maintainers: one command sets every version field
-AGENTS.md                                        rules for AI agents contributing to this repo
-```
-
-**References**
-
-| File | Covers |
-|---|---|
-| [01-spec-clarity](skills/build-orchestration-setup/references/01-spec-clarity.md) | scorecard, ambiguity hunt, P1/P2/P3, acceptance criteria, gate |
-| [02-questionnaire](skills/build-orchestration-setup/references/02-questionnaire.md) | all nine rounds with options and recommendations |
-| [03-workspace-setup](skills/build-orchestration-setup/references/03-workspace-setup.md) | folders, git, credentials, tools, test environment, schedulers |
-| [04-roles-and-pipeline](skills/build-orchestration-setup/references/04-roles-and-pipeline.md) | 12 roles, lanes, dispatch shape, pipeline, round sizing |
-| [05-memory-and-no-double-work](skills/build-orchestration-setup/references/05-memory-and-no-double-work.md) | where every fact lives, the rituals, never twice |
-| [06-provider-failover](skills/build-orchestration-setup/references/06-provider-failover.md) | limit detection, fallback lanes, the gate, chat-only models |
-| [07-reporting](skills/build-orchestration-setup/references/07-reporting.md) | the metric, dashboard, live view, handovers |
-| [08-lessons-learned](skills/build-orchestration-setup/references/08-lessons-learned.md) | 38 failure modes and what now prevents each |
-| [09-skills-and-cost-quality](skills/build-orchestration-setup/references/09-skills-and-cost-quality.md) | skills plan, model tier per role, review depth by risk |
-
-**Toolkit** - `python tools/orch.py <command>` once `init` has copied it into your repo
-
-| Command | Does |
-|---|---|
-| `init <repo>` | copy templates + tools, never overwrite, wire git hooks, set the author |
-| `unfilled` | list `{{TODO}}` placeholders the setup still has to fill |
-| `skills [repo]` | installed skills per engine; skills agent files name but lack |
-| `preflight` | board valid, hooks wired, author, CLIs on PATH, skills installed, env vars present, state outside the repo, RAM |
-| `supervise` | the unattended round loop: limit detection, fallback lanes, gate, re-exec on change, STOP file, stop after 3 identical failures |
-| `board validate · ready · metrics` | consistency (done needs a commit hash), next work by priority, shipped % |
-| `check-not-done <ID>` | evidence an item is not already done or owned: board, git log, branches, ledger |
-| `safe-commit -m msg <paths>` | commit only these paths; waits while a merge is in progress |
-| `redact control · scan · apply <file>` | proven secret scan before anything leaves the machine |
-| `snapshot` · `live-view` | read-only progress JSON · self-refreshing local status page |
+Work by anyone other than the lead is **reconciled** before it is built on: every round starts with a
+knowledge-gap check, and foreign plans get a blind re-plan by the lead plus an arbiter's ruling.
 
 ## Failover: the build never just stops
 
 ```mermaid
 sequenceDiagram
-    participant S as Supervisor
+    participant S as Supervisor / Keeper
     participant L as Lead provider
     participant B as Build provider
+    participant C as Cloud planners
     S->>L: round (refill lanes for 3 h)
-    L-->>S: usage limit (own usage record, or log tail - never quoted text)
-    S->>S: mark lead limited until its reset
+    L-->>S: usage limit (own usage record - never quoted text)
     S->>B: build APPROVED plans on own branches (never main)
-    S->>S: sleep until the earliest reset
-    S->>L: next round - gate those branches FIRST
-    L-->>S: GATED W1-2 accepted, then normal work
+    S->>C: accelerate - plan the next items on the cloud credit
+    L-->>S: back below 50%
+    S->>C: HANDBACK - finish the current item, stop
+    S->>L: next round - reconcile and gate everything FIRST
 ```
 
-One merge gate. Build providers never plan, merge, touch the board, live systems or credentials. The
-supervisor starts at logon, restarts on failure, re-execs itself when its rules change, and stops cleanly on a
-`STOP` file - it never kills a running round.
+## What's inside
 
-## Philosophy
+```text
+skills/build-orchestration-setup/   THE SKILL
+  SKILL.md                          the phases
+  references/                       10 files, loaded on demand (readiness gate ... tool routing)
+  scripts/orch.py                   the toolkit - Python 3.11+ standard library only
+  assets/templates/                 copied into your repo by `orch.py init`
+commands/                           /orchestrate, /build-status (Claude Code)
+.claude-plugin/ .codex-plugin/ .cursor-plugin/   plugin manifests
+examples/lunch-poll/                a filled-in example setup
+tests/                              pytest suite
+```
 
-- **Clarity before code.** An hour of questions before round 1 saves many agent-hours after it.
-- **Measured, not inferred.** Every check has a control that can go red. Skips are not passes.
-- **Never pay twice.** Check before starting; commit, tick and log in the same turn; ledgers over memory.
-- **The repository is the truth.** Status lives on the board, decisions in the log, never in a chat.
-- **One merge gate.** Many builders, one reviewer of what reaches main.
-- **Best quality at the lowest cost.** Cheapest adequate model per role, review depth by risk, the fewest skills per task.
-- **The owner is the bottleneck.** Decide and log; ask only for what can't be undone, in one batch.
+| Toolkit command | Does |
+|---|---|
+| `init <repo>` / `unfilled` | copy templates + tools (never overwrite, hooks, author) / list placeholders left |
+| `skills [repo]` | installed skills per engine; skills agent files name but lack |
+| `preflight` | everything a round depends on - PASS / WARN / FAIL |
+| `supervise` | unattended rounds: limit detection, fallback build lanes, gate, re-exec on change, STOP file |
+| `keeper` | one scheduled pass: restarts, build lanes, idle planning, cloud planners steady / accelerate / handback |
+| `gap` | knowledge gap: work the lead didn't see, and `REVIEWERS=<n>` |
+| `board validate · ready · metrics` / `check-not-done <ID>` | board consistency, next work by priority, progress / never do a task twice |
+| `safe-commit` · `redact` · `snapshot` · `live-view` | safe side-commits · proven secret scan · progress JSON · local status page |
 
-## Compatibility
+## A personal note
 
-| Tool | Loads the skill | Lead provider in `supervise` | Build provider | How it's covered |
-|---|---|---|---|---|
-| Claude Code | plugin / skills folder | example config | example config | `claude plugin validate` passes; local marketplace install tested (skill + both commands) |
-| Claude apps | skill zip upload | - | - | Agent Skills format, checked by tests |
-| Codex CLI | `.codex-plugin` / skills folder | configurable | example config, usage-record reader | manifest only; reader tested on sample records |
-| Gemini CLI | skills folder | configurable | example config (off) | template only |
-| Cursor | `.cursor-plugin` | - | - | manifest only |
-| Any other CLI agent | skills folder | add to `orchestration.toml` | add to `orchestration.toml` | provider-neutral by design |
+This is **my personal approach to AI orchestration**. I built it while running a real multi-week software
+build with several AI agents in parallel, and I learned most of it the hard way - the lessons file is the
+receipt. It is not an official method and not the only way to do this. It is what worked for me, written down
+so the next build starts where the last one ended.
+
+**I'd be really happy about your feedback - and even happier if you give it a shot.** Try it on a toy
+project or a real one and tell me how it went: what worked, what broke, what you'd do differently, which tool
+routing works for your setup. Every report helps me deepen my understanding of how to orchestrate AI agents
+well, and it makes this better for everyone who uses it.
+
+- 💬 **Share an experience, ask a question, suggest an idea:** [Discussions](https://github.com/christian281150/AI-orchestrator_skill/discussions)
+- 🐞 **Something doesn't work:** [open an issue](https://github.com/christian281150/AI-orchestrator_skill/issues/new/choose)
+- 📓 **A failure mode you hit with your own agents:** use the *Lesson from a real build* issue template
+- ⭐ **Useful to you?** A star helps others find it.
 
 ## FAQ
 
-**Do I need Claude *and* Codex?** No. One provider works. A second one keeps the build going when the first hits
-its limit and multiplies build capacity.
+**Can it help me write or sharpen my spec?** No, on purpose. Do that first with whatever you use for spec work;
+this skill starts when it's settled, and tells you what's missing if it isn't.
 
-**Does it write my spec?** No - it makes an existing spec buildable. If you have the knowledge but not the
-documents, it offers to take them by dictation.
+**Do I need several AI subscriptions?** No. Levels 1 and 2 work with one tool. A second provider keeps the build
+going when the first hits its limit and multiplies build capacity.
 
 **Will agents touch production?** Not under the default rules. Writes to live systems, money, publishing,
 deleting and credentials are *reserved actions*: agents prepare them and queue them for you.
 
-**Can I use it for a small app?** Yes - see the lunch-poll example. Choose chat-driven or 2-3 lanes and skip the dashboard.
-
-**Windows?** Yes - it was born there. The toolkit is Python; a Task Scheduler script is included, plus launchd and systemd templates.
+**Windows?** Yes - it was born there. The toolkit is Python; Task Scheduler, launchd and systemd templates are included.
 
 ## Verified and not verified
 
-- **Verified by the test suite** (30 tests; CI runs them on Linux, macOS and Windows with Python 3.11 and 3.13): unit tests and end-to-end supervisor
-  runs with stand-in providers - a limit hit, a build provider taking over, the gate in the next round, the STOP
-  file, the stop after repeated failures - plus git hook controls, safe-commit during a merge, preflight going red,
-  the skills inventory, manifest validity, one version everywhere, the version-bump tool, the worked example.
-- **Verified in CI on every push:** `ruff` lint and the Agent Skills reference validator (`skills-ref validate`).
-- **Verified by hand:** `claude plugin validate` passes for the marketplace and plugin manifests; installing
-  from GitHub with `/plugin marketplace add` + `/plugin install` delivers the skill and both commands; the
-  skills CLI (`npx skills add ... --list`) discovers the skill.
-- **Not verified by the tests:** the real agent CLIs (their flags and usage-record formats change between
-  versions - check each command in `orchestration.toml` against `<cli> --help`), the Codex and Cursor plugin
+- **Test suite** (36 tests; CI on Linux, macOS and Windows with Python 3.11 and 3.13): supervisor runs with
+  stand-in providers (limit hit, build provider takeover, gate in the next round, STOP, repeated-failure stop);
+  keeper passes (restart capped per day, build lanes, idle planning never touching unsafe lanes, cloud planners
+  steady / accelerate / handback / credit floor); knowledge-gap reconciliation; git hook controls; safe-commit
+  during a merge; preflight going red; skills inventory; manifests and one version everywhere; the example.
+- **In CI on every push:** `ruff` lint and the Agent Skills reference validator (`skills-ref validate`).
+- **By hand:** `claude plugin validate` passes (one expected warning: the root `CLAUDE.md` is for contributors, not plugin context); installing from GitHub via `/plugin marketplace add` delivers the
+  skill and both commands; the skills CLI discovers the skill.
+- **Not verified by the tests:** real agent CLIs (flags and usage formats change between versions - check every
+  command in `orchestration.toml` against `<cli> --help`), cloud-session launch commands, the Codex and Cursor
   manifests inside those apps, and the OS scheduler templates.
 
-## Contributing
-Issues, lessons from your own builds, and pull requests are welcome - see [CONTRIBUTING.md](CONTRIBUTING.md)
-and the [Code of Conduct](CODE_OF_CONDUCT.md). There is an issue template just for **lessons from real builds**.
+## Contributing · Security · License
+Issues, lessons from your own builds and pull requests are welcome - see [CONTRIBUTING.md](CONTRIBUTING.md),
+[AGENTS.md](AGENTS.md) (rules for AI agents working on this repo) and the [Code of Conduct](CODE_OF_CONDUCT.md).
+Report vulnerabilities privately - see [SECURITY.md](SECURITY.md). Release downloads ship with a checksum and a
+signed build-provenance attestation (`gh attestation verify build-orchestration-setup.zip -R christian281150/AI-orchestrator_skill`).
 
-## Security
-Report vulnerabilities privately - see [SECURITY.md](SECURITY.md), which also explains the security model
-for running agents unattended.
-
-## License
-[MIT](LICENSE) © 2026 christian281150 and contributors. See [NOTICE.md](NOTICE.md) for trademarks.
-
-Claude, Codex, Gemini and Cursor are trademarks of their respective owners. This project is independent and
-not affiliated with or endorsed by any of them.
-
-## Acknowledgements
-Built on the open [Agent Skills](https://agentskills.io/specification) format. Pairs well with process-skill
-libraries such as [obra/superpowers](https://github.com/obra/superpowers) - the skills plan will suggest them
-where they fit.
+[MIT](LICENSE) © 2026 christian281150 and contributors. Claude, Codex, Gemini and Cursor are trademarks of their
+respective owners; this project is independent and not affiliated with or endorsed by any of them
+([NOTICE](NOTICE.md)). Built on the open [Agent Skills](https://agentskills.io/specification) format; pairs
+well with process-skill libraries such as [obra/superpowers](https://github.com/obra/superpowers).

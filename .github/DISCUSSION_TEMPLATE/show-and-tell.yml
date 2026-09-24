@@ -1,0 +1,24 @@
+title: "[Tried it] "
+labels: ["tried-it"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for giving it a shot! Every report - good or bad - helps me understand what works in AI
+        orchestration and what doesn't. Please leave out credentials, client names and private data.
+  - type: dropdown
+    attributes:
+      label: Adoption level you used
+      options: ["1 Rituals", "2 Unattended", "3 Multi-provider", "4 Full", "Only parts of it"]
+    validations: {required: true}
+  - type: input
+    attributes: {label: Your tools, description: "e.g. Claude Code as lead, Codex as build provider, cloud sessions"}
+    validations: {required: true}
+  - type: textarea
+    attributes: {label: What you built (roughly), description: "Project type and size - no private details needed"}
+  - type: textarea
+    attributes: {label: What worked}
+  - type: textarea
+    attributes: {label: What broke or felt wrong}
+  - type: textarea
+    attributes: {label: What you would change - in the skill, the routing, the rules}

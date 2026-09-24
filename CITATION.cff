@@ -1,14 +1,14 @@
 cff-version: 1.2.1
 message: "If you use this project, please cite it as below."
-title: "agent-build-orchestrator"
+title: "AI-orchestrator_skill"
 abstract: "A skill and toolkit for running multi-agent software builds from spec to shipped code across AI coding tools, with provider failover, never-twice memory and reporting."
 type: software
 authors:
   - alias: christian281150
-version: 1.3.0
+version: 1.4.0
 date-released: 2026-09-24
 license: MIT
-repository-code: "https://github.com/christian281150/agent-build-orchestrator"
+repository-code: "https://github.com/christian281150/AI-orchestrator_skill"
 keywords:
   - agent-skills
   - multi-agent

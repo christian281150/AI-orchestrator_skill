@@ -29,9 +29,26 @@ class Provider:
     strip_env: list[str] = field(default_factory=list)
     env: dict[str, str] = field(default_factory=dict)
     enabled: bool = True
+    kind: str = "local"               # local CLI | cloud (remote sessions, own credit) | chat (copy-paste desk)
+    plan_command: list[str] = field(default_factory=list)   # plans one item ({item} {worktree} {branch} {todo})
+    usage_command: list[str] = field(default_factory=list)  # prints JSON: five_hour_pct, weekly_pct, credit_left
+    restart_max_per_day: int = 3
 
     def can(self, role: str) -> bool:
         return self.enabled and role in self.roles
+
+
+@dataclass
+class Keeper:
+    interval_minutes: int = 10
+    queue_low_watermark: int = 5       # approved plans waiting; below this, planners are topped up
+    cloud_steady: int = 1              # cloud planners while the lead provider has capacity
+    cloud_accelerate_max: int = 3      # cloud sessions in total once the lead provider is limited
+    handback_below_pct: float = 50.0   # lead usage (5-hour) below this -> accelerate sessions hand back
+    cloud_credit_floor: float = 5.0    # never launch a cloud session below this credit
+    idle_planning: bool = True         # an idle build provider may plan one safe open item
+    unsafe_lanes: list[str] = field(default_factory=lambda: ["db", "infra", "security"])
+    handback_file: str = "docs/coordination/cloud-handback.txt"
 
 
 @dataclass
@@ -61,6 +78,7 @@ class Config:
     required_env: list[str]
     redact_terms: list[str]
     providers: list[Provider]
+    keeper: Keeper = field(default_factory=Keeper)
 
     def provider(self, name: str) -> Provider:
         for p in self.providers:
@@ -100,7 +118,12 @@ def load(path: str | os.PathLike) -> Config:
             native_limit_threshold=float(p.get("native_limit_threshold", 97.0)),
             max_parallel=int(p.get("max_parallel", 1)), strip_env=list(p.get("strip_env", [])),
             env={k: str(v) for k, v in p.get("env", {}).items()},
+            kind=p.get("kind", "local"), plan_command=list(p.get("plan_command", [])),
+            usage_command=list(p.get("usage_command", [])), restart_max_per_day=int(p.get("restart_max_per_day", 3)),
             enabled=bool(p.get("enabled", True))))
+    bad_kind = [p.name for p in providers if p.kind not in ("local", "cloud", "chat")]
+    if bad_kind:
+        raise ValueError(f"providers with unknown kind (local | cloud | chat): {bad_kind}")
     if not any(p.can("coordinator") for p in providers):
         raise ValueError("no enabled provider has the 'coordinator' role")
     if not any(p.can("merge") for p in providers):
@@ -129,4 +152,5 @@ def load(path: str | os.PathLike) -> Config:
         required_env=list(safety.get("required_env", [])),
         redact_terms=list(safety.get("redact_terms", [])),
         providers=providers,
+        keeper=Keeper(**{k: v for k, v in raw.get("keeper", {}).items() if k in Keeper.__dataclass_fields__}),
     )

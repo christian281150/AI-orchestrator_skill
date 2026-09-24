@@ -14,3 +14,11 @@ Register-ScheduledTask -TaskName $name -Action $action -Trigger $trigger -Settin
 Write-Output "Registered '$name'. Start now:  Start-ScheduledTask -TaskName '$name'"
 Write-Output "Stop cleanly: create docs\coordination\STOP (the supervisor exits between rounds). Never kill a running round."
 Write-Output "Also set: Power & sleep -> never sleep while plugged in, or rounds pause with the PC."
+
+# The keeper: a short pass every 10 minutes, independent of rounds (restarts, build lanes, cloud planners).
+$kname = '{{PROJECT_NAME}}-keeper'
+$kaction = New-ScheduledTaskAction -Execute $python -Argument "`"$repo\tools\orch.py`" --config `"$repo\orchestration.toml`" keeper" -WorkingDirectory $repo
+$ktrigger = New-ScheduledTaskTrigger -Once -At (Get-Date) -RepetitionInterval (New-TimeSpan -Minutes 10)
+$ksettings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries -MultipleInstances IgnoreNew -ExecutionTimeLimit (New-TimeSpan -Minutes 9)
+Register-ScheduledTask -TaskName $kname -Action $kaction -Trigger $ktrigger -Settings $ksettings -Force | Out-Null
+Write-Output "Registered '$kname' (every 10 minutes)."

@@ -56,22 +56,35 @@ interruption. Each is built into the kit where it can be; the rest are rules.
 26. **Skills promised in agent files weren't installed** (12 of them). -> Preflight checks every named skill.
 27. **10 leads on 16 GB RAM ran at the edge.** -> Measure one round before raising parallelism.
 28. **External agents spawn their own helpers.** -> Count them in RAM and allowance planning.
+29. **A build provider emptied its weekly allowance in hours** (~2.5 points per 5 minutes with 5-6 lanes). ->
+    Measure burn per provider before scaling; usage meters with thresholds; route easier work to it deliberately.
+30. **Everything stopped while the lead was limited**, although cloud credit sat unused. -> Cloud planners with
+    steady / accelerate / handback rules and a credit floor; a keeper independent of rounds.
+31. **Plans from another tool looked fine and weren't.** -> Knowledge-gap check every round; blind re-plan by the
+    lead and an arbiter before a foreign plan is built.
+32. **Cloud sessions planned against stale code, or could not push.** -> Push on commit/merge; connect the git host
+    to the cloud service before starting sessions; never reuse sessions started without it.
+33. **A session refused to hand its work over; the plan was lost.** -> Plans live in the repository (ledgers),
+    never only inside a session.
+34. **Mixing "what to build" into the build** blurred who decides and produced questions mid-run. -> This skill
+    starts only when the spec is settled; the readiness gate returns gaps instead of filling them.
 
 ## Windows specifics
-29. PowerShell 5.1: `>` writes UTF-16; `Set-Content -Encoding UTF8` adds a byte-order mark (breaks agent
+35. PowerShell 5.1: `>` writes UTF-16; `Set-Content -Encoding UTF8` adds a byte-order mark (breaks agent
     frontmatter); native arguments lose double quotes; `*>` with `ErrorActionPreference=Stop` turns stderr
     into a fatal error. -> The kit is Python; write UTF-8 without BOM; use `Start-Process` redirects.
-30. The console code page (cp1252) broke tools reading git output. -> Always decode git output as UTF-8.
-31. Command lines over ~8k characters fail. -> Pass prompts as files.
-32. A remote tool call times out after ~60 s. -> Start long jobs detached and poll.
-33. Never run a file edit and its commit in the same parallel batch - the commit can take the old version.
+36. The console code page (cp1252) broke tools reading git output. -> Always decode git output as UTF-8.
+37. Command lines over ~8k characters fail. -> Pass prompts as files.
+38. A remote tool call times out after ~60 s. -> Start long jobs detached and poll.
+39. Never run a file edit and its commit in the same parallel batch - the commit can take the old version.
+40. PowerShell `Start-Process -ArgumentList` splits arguments that contain spaces - quote them explicitly.
 
 ## Infrastructure and safety
-34. **Blast radius decides hosting.** A breach of a tunnel ending on a personal PC reaches everything on it; on
+41. **Blast radius decides hosting.** A breach of a tunnel ending on a personal PC reaches everything on it; on
     a small VM it reaches a server rebuilt in 20 minutes.
-35. **Sequencing, not attackers:** configure the access policy before the endpoint is reachable.
-36. **Paid capacity left scaled up** costs money for nothing. -> Up in the step that starts the load, down in a
+42. **Sequencing, not attackers:** configure the access policy before the endpoint is reachable.
+43. **Paid capacity left scaled up** costs money for nothing. -> Up in the step that starts the load, down in a
     `finally`.
-37. **External build agents with full access** (sandbox broken on the OS): credentials stripped from their
+44. **External build agents with full access** (sandbox broken on the OS): credentials stripped from their
     environment, residual risk named in the handover.
-38. **Data leaving the machine**: redact with a proven scanner (planted secret found, then zero hits).
+45. **Data leaving the machine**: redact with a proven scanner (planted secret found, then zero hits).

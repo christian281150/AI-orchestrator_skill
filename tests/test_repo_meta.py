@@ -22,7 +22,7 @@ def test_manifests_are_valid_json_and_versions_agree():
     found = {}
     for rel in (".claude-plugin/plugin.json", ".codex-plugin/plugin.json", ".cursor-plugin/plugin.json"):
         data = json.loads((ROOT / rel).read_text())
-        assert data["name"] == "agent-build-orchestrator" and data["license"] == "MIT"
+        assert data["name"] == "ai-orchestrator" and data["license"] == "MIT"
         found[rel] = data["version"]
     mk = json.loads((ROOT / ".claude-plugin/marketplace.json").read_text())
     found["marketplace"] = mk["plugins"][0]["version"]

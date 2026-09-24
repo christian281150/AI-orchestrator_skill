@@ -1,5 +1,7 @@
 # Plan - <ID> <item>
 
+**Authored-by:** <provider name - the lead, or another provider/cloud session (then it is reconciled, see `orch.py gap`)>
+
 **Outcome:** <one sentence - what works when this is merged>
 **Lane / files owned:** <paths> | **Must not touch:** <paths>
 **Read first:** <paths>

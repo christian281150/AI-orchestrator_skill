@@ -1,0 +1,12 @@
+labels: ["question"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Reminder: this skill starts **after** your idea, spec and architecture are settled - it does not help
+        write specs. Questions about running the build, tools, routing, setup or the toolkit are all welcome.
+  - type: textarea
+    attributes: {label: Your question}
+    validations: {required: true}
+  - type: input
+    attributes: {label: Tools and OS, description: "e.g. Claude Code + Codex on Windows"}

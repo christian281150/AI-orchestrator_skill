@@ -1,5 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: Tried it? Share your experience
+    url: https://github.com/christian281150/AI-orchestrator_skill/discussions/categories/show-and-tell
+    about: Good or bad - every report helps. This is the most useful thing you can post.
+  - name: Question or idea
+    url: https://github.com/christian281150/AI-orchestrator_skill/discussions
+    about: Ask, discuss, propose - in Discussions rather than issues.
   - name: Security vulnerability
-    url: https://github.com/christian281150/agent-build-orchestrator/security/advisories/new
+    url: https://github.com/christian281150/AI-orchestrator_skill/security/advisories/new
     about: Report privately, not as an issue.

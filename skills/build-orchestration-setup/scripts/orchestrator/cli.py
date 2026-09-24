@@ -36,6 +36,8 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("supervise", help="run rounds unattended (with provider failover)")
     s.add_argument("config_path", nargs="?")
     s.add_argument("--passes", type=int, default=None)
+    sub.add_parser("keeper", help="one keeper pass: restarts, build lanes, idle planning, cloud planners")
+    sub.add_parser("gap", help="knowledge gap: work the lead did not see, and REVIEWERS=<n>")
     s = sub.add_parser("board", help="validate | ready | metrics")
     s.add_argument("action", choices=["validate", "ready", "metrics"])
     s = sub.add_parser("check-not-done", help="evidence that an item is not already done / owned")
@@ -104,6 +106,16 @@ def main(argv: list[str] | None = None) -> int:
         print("\n".join(lines))
         print(f"PREFLIGHT {'OK' if not fails else f'FAILED ({fails})'}")
         return 1 if fails else 0
+    if a.cmd == "keeper":
+        from .keeper import run_once
+        actions = run_once(cfg)
+        print("\n".join(actions) or "keeper: nothing to do")
+        return 0
+    if a.cmd == "gap":
+        from .gap import report
+        lines, n = report(cfg)
+        print("\n".join(lines))
+        return 0
     if a.cmd == "board":
         from . import board
         rows = board.parse(cfg.board)

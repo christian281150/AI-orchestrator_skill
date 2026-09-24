@@ -44,6 +44,12 @@ Each provider has a priority (lower = preferred), roles, commands and a limit de
 **Automatic restart:** the supervisor is started by the OS scheduler at logon and restarted on failure; it
 re-execs itself between rounds when its code or config changed; a `STOP` file ends it cleanly between rounds.
 
+**The keeper** (`orch.py keeper`, every ~10 minutes, independent of rounds) closes the remaining gaps: it restarts
+lanes that stopped on a limit (capped per day), starts build lanes whenever no round runs, lets an idle build
+provider plan one safe item, and runs cloud planners in steady / accelerate / handback mode on their own credit.
+Which tool gets which work, and why: `10-tool-routing.md`. Work done by anyone but the lead is reconciled at the
+start of the next round (`orch.py gap`).
+
 ## What makes fallback safe
 - Build providers only build **plans the lead provider's planner and reviewer already approved**, from a
   self-contained brief. They never plan, never merge, never touch the board, the decisions log, live

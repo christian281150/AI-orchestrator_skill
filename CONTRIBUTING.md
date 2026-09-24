@@ -1,6 +1,9 @@
 # Contributing
 
-Thanks for helping. The bar is the same one the skill sets for agents: **measured, not inferred**.
+Thanks for helping. The most valuable contribution is simple: **try it and tell me how it went** in
+[Discussions -> Show and tell](https://github.com/christian281150/AI-orchestrator_skill/discussions/categories/show-and-tell).
+
+For code and docs, the bar is the same one the skill sets for agents: **measured, not inferred**.
 
 ## Ground rules
 - **One concern per pull request.** The subject says what changed; the body says why, what it was chosen over,

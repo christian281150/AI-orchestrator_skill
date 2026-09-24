@@ -1,9 +1,12 @@
 # Phase 2 - The orchestration questionnaire
 
-Nine short rounds, typically 20-30 minutes. Rules:
+Everything asked here is about **how to build**, never about *what* to build - scope, features and
+architecture are settled before this skill starts (Phase 1 only checks that).
+
+Ten short rounds, typically 20-30 minutes. Rules:
 - `AskUserQuestion`, max 4 questions per call, 2-4 options each, the recommended option first with
   "(Recommended)". The owner can always type their own answer.
-- Derive each recommendation from the intake (Phase 0), the spec and the clarity phase - never default
+- Derive each recommendation from the intake (Phase 0), the spec and the readiness gate - never default
   blindly. Skip any question those already answer, and say which answer you took from where.
 - Provider-neutral: nothing here assumes a particular AI vendor. "Lead provider" = the one trusted to plan,
   review and merge; "build providers" = the ones that implement approved plans.
@@ -34,6 +37,14 @@ first use and say what a thing does / technical. (Ask; never assume.)
 **2.2 Machine and shell** - Windows + PowerShell / macOS / Linux / cloud only.
 **2.3 Human involvement** - unattended, owner approves only reserved actions (**recommended**) / owner
 approves each merge wave / interactive pair-building.
+**2.4 How much machinery?** (adoption level - start small, add later; every level reuses the one before)
+| Level | What runs | Choose when |
+|---|---|---|
+| 1 Rituals only | board, decisions log, ledgers, handovers, rules - agents in a chat or one CLI session | small build, trying it out |
+| 2 Unattended rounds | + supervisor (rounds, restart, STOP file), git hooks, preflight | one provider, runs while you're away |
+| 3 Multi-provider | + build providers, failover, knowledge-gap reconciliation | two or more AI subscriptions |
+| 4 Full | + keeper every ~10 min, cloud planners (steady / accelerate / handback), idle planning, dashboard | long builds, maximum throughput |
+Recommend the lowest level that fits the build; say what the next level would add.
 
 ## Round 3 - Providers
 **3.1 Which AI coding tools and subscriptions do you have?** (multiSelect) - e.g. Claude Code, OpenAI Codex,
@@ -86,12 +97,21 @@ between rounds on rule changes (**recommended**) / manual start.
 **7.4 Chat-only models** - use as a redacted copy-paste "desk" on a throwaway branch, never main (experiment
 only) / not at all (**recommended** unless the owner wants to test one).
 
+## Round 7b - Which tool does what  (see `10-tool-routing.md`; levels 3-4)
+Show the routing table from `10-tool-routing.md` filled with the owner's tools, then:
+**7b.1 Routing** - keep the default routing (**recommended**) / adjust rows (ask which).
+**7b.2 Cloud sessions for planning** (separate credit) - steady 1, accelerate up to 3 when the lead is limited,
+hand back when it recovers (**recommended** if the owner has cloud credit) / off.
+**7b.3 Idle build providers plan safe items** - yes, the lead reconciles every foreign plan with a blind re-plan
+(**recommended**) / no, only the lead plans.
+**7b.4 Keeper** - scheduled pass every ~10 minutes (**recommended** for level 4) / supervisor only.
+
 ## Round 8 - Guardrails
 **8.1 Autonomy** - decide and log: back up -> decide -> log chosen and not chosen -> continue
 (**recommended**) / ask on judgement calls.
 **8.2 Reserved for the owner** (multiSelect) - writes to live incl. applying migrations; spending money;
 publishing outside the organisation; deleting anything unrebuildable; credentials; widening access; merge to
-main; push. (Pre-fill from the clarity phase.)
+main; push. (Pre-fill from the readiness gate.)
 **8.3 Git model** - `feat/<lane>-<ID>` branches, continuous commits, one merge gate, merge when tests pass
 (**recommended**) / pull request per lane with human review / trunk-based small commits.
 **8.4 Commit attribution** [git.forbid_trailers] - the owner's name only, AI trailer lines blocked by a hook /
@@ -105,7 +125,7 @@ it; it versions with the code) / issue tracker / external tool.
 **9.4 Handovers and alerts** - handover doc at every session switch + one batched owner list on the board
 (**recommended**) / plus a push notification when blocked on the owner / weekly summary only.
 
-**Closing question:** "Anything the build must never do, or must always do, that isn't covered?"
+**Closing question (Round 10):** "Anything the build must never do, or must always do, that isn't covered?"
 
 ## After the questionnaire
 One-screen summary table of all answers -> one confirmation -> Phase 3.

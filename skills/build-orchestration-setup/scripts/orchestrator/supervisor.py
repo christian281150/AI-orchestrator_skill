@@ -48,6 +48,7 @@ def log(cfg: Config, msg: str) -> None:
 
 def write_state(cfg: Config, **kw) -> None:
     kw["updated"] = datetime.now().isoformat(timespec="seconds")
+    kw["supervisor_pid"] = os.getpid()
     (cfg.state_dir / "supervisor-state.json").write_text(json.dumps(kw, indent=2), encoding="utf-8")
 
 
@@ -114,6 +115,11 @@ def _alive(pid: int) -> bool:
     if os.name == "nt":
         out = subprocess.run(["tasklist", "/FI", f"PID eq {pid}"], capture_output=True).stdout.decode(errors="replace")
         return str(pid) in out
+    try:                                   # reap our own finished children (else they linger as zombies)
+        if os.waitpid(pid, os.WNOHANG)[0] == pid:
+            return False
+    except ChildProcessError:
+        pass                               # not our child - fall through to the signal probe
     try:
         os.kill(pid, 0)
         return True
@@ -139,7 +145,7 @@ def load_markers(cfg: Config) -> list[dict]:
 
 def eligible_for_fallback(cfg: Config) -> list[board.Row]:
     rows = board.parse(cfg.board)
-    taken = {m["item"] for m in load_markers(cfg)}
+    taken = {i for m in load_markers(cfg) for i in ([m.get("item")] + m.get("items", [])) if i}
     return [r for r in board.ready(rows)
             if r.status == "plan-approved" and not r.owner and r.id not in taken
             and (cfg.ledgers / r.id / "build-brief.md").exists()]
@@ -167,7 +173,9 @@ def start_fallback_lanes(cfg: Config, state: ProviderState, now: datetime | None
             proc = run_logged(fill(p.build_command, values), wt, provider_env(p),
                               cfg.state_dir / "fallback" / "logs" / f"{row.id}-{p.name}.log", None, detach=True)
             (markers_dir(cfg) / f"{row.id}.json").write_text(json.dumps({
-                "item": row.id, "provider": p.name, "pid": proc.pid, "branch": branch, "worktree": str(wt),
+                "item": row.id, "kind": "build", "provider": p.name, "pid": proc.pid, "branch": branch,
+                "worktree": str(wt), "command": fill(p.build_command, values),
+                "log": str(cfg.state_dir / "fallback" / "logs" / f"{row.id}-{p.name}.log"),
                 "started": datetime.now().isoformat(timespec="seconds")}, indent=2), encoding="utf-8")
             running += 1
             started.append(row.id)
@@ -193,6 +201,11 @@ def round_prompt(cfg: Config, round_id: str, provider: Provider, window_end: dat
     if running:
         lines.append("- Still running fallback lanes (do not dispatch these items): "
                      + ", ".join(m["item"] for m in running))
+    from .gap import knowledge_gap
+    gap_items, reviewers = knowledge_gap(cfg)
+    if gap_items:
+        lines.append(f"- KNOWLEDGE GAP (work you did not see): REVIEWERS={reviewers}. Reconcile these before new dispatch:")
+        lines += [f"  - {g['item']}: {g['why']} -> write {', '.join(g['needs'])}" for g in gap_items]
     return "\n".join(lines) + "\n"
 
 
