@@ -48,7 +48,10 @@ unsafe_lanes = ["db", "infra", "security"]   # never auto-planned by a non-lead 
 
 # ---------------------------------------------------------------- providers
 # kind: local (CLI on this machine) | cloud (remote sessions, usually a separate credit) | chat (copy-paste desk)
-# usage_command: optional; must print JSON like {"five_hour_pct": 42, "weekly_pct": 10, "credit_left": 233.5}
+# usage_command: optional; must print JSON like {"five_hour_pct": 42, "weekly_pct": 10, "credit_left": 233.5}.
+#   Ready-made readers: ["{python}", "tools/orch.py", "usage", "claude" | "codex"] ({python} = the Python running orch.py).
+#   A reader that cannot understand the tool's record makes the provider start NO new work (usage_fail_closed = true)
+#   until it reads again; "nothing recorded yet" is not a block. `preflight` shows the live reading.
 # Provider-neutral: add any CLI agent. priority: lower = preferred. roles: coordinator | plan | review | build | merge
 # The examples below (Claude lead, Codex + Gemini builders) are one setup; replace them with the owner's tools.
 # {prompt_file} {round_id} ({prompt} = full text) in round_command; {brief_file} ({brief} = full text) {worktree} {item} {branch} in build_command.
@@ -62,6 +65,8 @@ roles = ["coordinator", "plan", "review", "build", "merge"]
 round_command = ["claude", "-p", "Read {prompt_file} completely and follow it. It is your full instruction for this round.", "--model", "opus"]
 build_command = ["claude", "-p", "Read {brief_file} completely and carry it out in {worktree} on branch {branch}.", "--model", "sonnet"]
 limit_patterns = ["usage limit reached", "limit will reset", "resets? (?:at )?\\d", "you've hit your limit"]
+# Reads the allowance from the statusline capture (see docs/CONFIGURATION.md) and from stream-json round logs.
+usage_command = ["{python}", "tools/orch.py", "usage", "claude"]
 max_parallel = 4
 [providers.env]
 CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS = "30"              # helper cap per round - raise only after measuring RAM
@@ -75,6 +80,7 @@ build_command = ["codex", "exec", "--cd", "{worktree}", "--full-auto", "Read {br
 plan_command = ["codex", "exec", "--cd", "{worktree}", "--full-auto", "Plan item {item} only: write docs/coordination/ledgers/{item}/plan.md (first line: Authored-by: codex) and build-brief.md on branch {branch}. Do not implement."]
 native_limit = "codex_rollout"                           # its own usage record decides, not log text
 native_limit_threshold = 97
+usage_command = ["{python}", "tools/orch.py", "usage", "codex"]   # both windows + reset times for the keeper
 max_parallel = 5
 strip_env = []                                           # e.g. ["DB_PASSWORD_ADMIN", "CLOUD_API_TOKEN"]
 

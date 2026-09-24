@@ -85,7 +85,8 @@ After editing, run `python tools/orch.py preflight` - it must stay green.
 | | `roles` | `coordinator` `plan` `review` `build` `merge` | exactly **one** provider should have `merge` |
 | | `kind` | `local` | `cloud` for remote sessions, `chat` for copy-paste models |
 | | `round_command` / `build_command` / `plan_command` | examples | always check against `<tool> --help` for your version |
-| | `usage_command` | `[]` | a script printing `{"five_hour_pct": .., "weekly_pct": .., "credit_left": ..}` |
+| | `usage_command` | readers for claude and codex | a script printing `{"five_hour_pct": .., "weekly_pct": .., "credit_left": ..}`; ready-made: `["{python}", "tools/orch.py", "usage", "claude"]` (or `"codex"`) - see [usage meters](#4-usage-meters-how-full-is-each-allowance) |
+| | `usage_fail_closed` | true | `false` = an unreadable meter is ignored instead of stopping new work (not recommended) |
 | | `max_parallel` | 1-5 | lanes this tool may run at once - measure memory first |
 | | `strip_env` | `[]` | credential variables this tool must never see |
 | | `native_limit_threshold` | 97 | % at which new work stops |
@@ -94,6 +95,7 @@ After editing, run `python tools/orch.py preflight` - it must stay green.
 ## 3. Common customizations (recipes)
 | I want to... | Do this |
 |---|---|
+| see **how full** each allowance is | `python tools/orch.py usage claude` / `codex`; Claude Code needs the status-line line from [section 4](#4-usage-meters-how-full-is-each-allowance) |
 | use **only one** AI tool | keep one `[[providers]]` block with all five roles; `fallback_when_limited = false`; profile `adoption_level = 2` |
 | **add** a second build tool | copy a build-provider block, change `name`, commands and `priority`; run `preflight` |
 | run on a **smaller machine** (8 GB) | `max_parallel = 2` per tool; profile `build_lanes_shared = 2`, `memory_no_new_start_pct = 80` |
@@ -102,3 +104,30 @@ After editing, run `python tools/orch.py preflight` - it must stay green.
 | have everything explained in **plain language** | profile `vocabulary = "plain"` |
 | **my own naming** | profile `[naming]` + `[project] id_pattern` |
 | keep agents away from **production** | list it in profile `[reserved] actions`; add its credential names to `strip_env` for build tools |
+
+## 4. Usage meters: how full is each allowance
+The build stops starting new work at `native_limit_threshold` (97 %) - *before* the tool refuses - if it can
+read how full the allowance is. `python tools/orch.py usage claude` (or `codex`) prints what it reads:
+
+| Status | Means | Effect |
+|---|---|---|
+| `ok` | percentages for the 5-hour and weekly windows, reset times, age of the reading | at the threshold: no new work until the reset |
+| `no-data` | nothing recorded yet (or a login without plan windows) | no block - the log check decides, as before |
+| `unreadable` | a record exists but its format changed (tool update) | **no new work** until it reads again; `preflight` shows it red. Update the skill, or set `usage_fail_closed = false` knowingly |
+
+**Codex** writes its own session records - nothing to set up.
+
+**Claude Code** has no usage file, but passes the usage to its *status line*. Let the status line store it
+(once, in `~/.claude/settings.json`; Windows: `C:\Users\<you>\.claude\settings.json`):
+```json
+{ "statusLine": { "type": "command",
+                  "command": "python /full/path/to/your-project/tools/orch.py usage claude --capture" } }
+```
+The bar then shows `5h 42% · week 10%`, and every refresh saves the reading to
+`~/.ai-orchestrator/usage/claude.json`. This replaces an existing status line; if you have your own, pipe its
+input into the same command as well. Unattended `claude -p` rounds don't refresh the status line - there the last
+reading counts and the log check stays the backstop. Round logs written with `--output-format stream-json
+--verbose` are read too.
+
+Checked against: Claude Code 2.1.281, and the Codex session-record format of 2026 builds (not re-checked
+against a live Codex install). Each reader states this in its output (`verified_with`).

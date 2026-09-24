@@ -26,6 +26,17 @@ Each provider has a priority (lower = preferred), roles, commands and a limit de
 3. **Reset time** parsed from the message ("resets at 3pm", "try again in 2h 5m", "resets Sep 27, 1pm");
    when none is found, re-probe every `reprobe_minutes`.
 4. Optional `status_command` per provider: exit 0 = available. Use it if the CLI offers a cheap check.
+4b. **Usage meters before the limit** - `usage_command`, ready-made readers `orch.py usage claude|codex`
+   (each marked with the CLI version it was checked against). They read the tool's own record, report
+   `ok` / `no-data` / `unreadable`, and treat a window whose reset has passed as 0 %. At
+   `native_limit_threshold` the provider starts no new work. **Fail closed:** `unreadable` (the record exists
+   but its format changed) also means no new work until it reads again - `preflight` shows it red.
+   `no-data` (nothing recorded yet, or a login without plan windows) is not a block; detection falls back to
+   steps 1-3. Control: `tests/test_usage_readers.py` renames a field and the provider must stop starting work.
+   Claude Code keeps no usage file of its own: the reader uses a **statusline capture** (a status line
+   command that stores the `rate_limits` Claude Code passes to it) and any `stream-json` logs with
+   `rate_limit_event` lines. Unattended `-p` rounds do not refresh the statusline - there the reading is
+   the last capture, and the log tail (step 2) stays the backstop.
 5. Operator override: delete the provider's entry in `<state_dir>/providers.json`; it is re-read each pass.
 
 ## The failover chain (what the supervisor does, pass by pass)

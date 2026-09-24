@@ -40,6 +40,10 @@ def main(argv: list[str] | None = None) -> int:
     s = sub.add_parser("doctor", help="is this computer ready? (before any project exists)")
     s.add_argument("--tools", nargs="*", default=None, help="AI tool commands to check, e.g. claude codex")
     s.add_argument("--project", default=None, help="the project folder you plan to use")
+    s = sub.add_parser("usage", help="read an AI tool's allowance from its own record (JSON for usage_command)")
+    s.add_argument("tool", choices=["claude", "codex"])
+    s.add_argument("--logs", nargs="*", default=[], help="claude: stream-json logs or folders to scan as well")
+    s.add_argument("--capture", action="store_true", help="claude: statusline hook - read status JSON from stdin")
     sub.add_parser("preflight", help="check everything a round depends on")
     s = sub.add_parser("skills", help="inventory installed skills per engine; flag skills agent files name but lack")
     s.add_argument("root", nargs="?", default=".")
@@ -75,6 +79,18 @@ def main(argv: list[str] | None = None) -> int:
         print("\n".join(lines))
         print("DOCTOR OK - ready for the first setup" if not fails else f"DOCTOR: {fails} problem(s) to fix first")
         return 1 if fails else 0
+    if a.cmd == "usage":
+        from . import usage_readers as ur
+        if a.capture:
+            print(ur.capture_claude(sys.stdin.read()))
+            return 0
+        logs = [Path(x) for x in a.logs]
+        if a.tool == "claude" and Path(a.config).exists():
+            state = _cfg(a).state_dir
+            logs += [state / "rounds", state / "fallback" / "logs"]
+        data = ur.read_claude(logs=logs) if a.tool == "claude" else ur.read_codex()
+        print(json.dumps(data))
+        return 2 if data["status"] == "unreadable" else 0
     if a.cmd == "profile":
         from . import profile
         if a.action == "init":

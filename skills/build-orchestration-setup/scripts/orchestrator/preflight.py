@@ -74,6 +74,15 @@ def run(cfg: Config) -> tuple[int, list[str]]:
             used = codex_used_percent()
             res(None if used is None else True, f"provider {p.name}: native usage record "
                 + ("not found (text fallback will be used)" if used is None else f"readable, {used:.0f}% used"))
+        if p.usage_command:
+            from .providers import usage
+            u = usage(p, cfg.root)
+            st = u.get("status", "ok")
+            pct = ", ".join(f"{k.split('_pct')[0]} {u[k]:.0f}%" for k in ("five_hour_pct", "weekly_pct")
+                            if isinstance(u.get(k), (int, float)))
+            res(False if st == "unreadable" else (None if st == "no-data" else True),
+                f"provider {p.name}: usage meter {st}" + (f" - {pct}" if pct else "")
+                + (f" - {u.get('reason')}" if u.get("reason") else ""))
     for name in cfg.required_env:
         res(bool(os.environ.get(name)), f"environment variable {name} is set (value not shown)")
     stripped = {n for p in cfg.providers for n in p.strip_env}

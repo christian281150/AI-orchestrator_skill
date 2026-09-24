@@ -32,6 +32,7 @@ class Provider:
     kind: str = "local"               # local CLI | cloud (remote sessions, own credit) | chat (copy-paste desk)
     plan_command: list[str] = field(default_factory=list)   # plans one item ({item} {worktree} {branch} {todo})
     usage_command: list[str] = field(default_factory=list)  # prints JSON: five_hour_pct, weekly_pct, credit_left
+    usage_fail_closed: bool = True    # usage_command output unreadable -> start no new work until it reads again
     restart_max_per_day: int = 3
 
     def can(self, role: str) -> bool:
@@ -120,6 +121,7 @@ def load(path: str | os.PathLike) -> Config:
             env={k: str(v) for k, v in p.get("env", {}).items()},
             kind=p.get("kind", "local"), plan_command=list(p.get("plan_command", [])),
             usage_command=list(p.get("usage_command", [])), restart_max_per_day=int(p.get("restart_max_per_day", 3)),
+            usage_fail_closed=bool(p.get("usage_fail_closed", True)),
             enabled=bool(p.get("enabled", True))))
     bad_kind = [p.name for p in providers if p.kind not in ("local", "cloud", "chat")]
     if bad_kind:

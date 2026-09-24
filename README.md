@@ -150,7 +150,7 @@ sequenceDiagram
     participant B as Build provider
     participant C as Cloud planners
     S->>L: round (refill lanes for 3 h)
-    L-->>S: usage limit (own usage record - never quoted text)
+    L-->>S: 97% of the allowance (usage meter) or limit hit - own record, never quoted text
     S->>B: build APPROVED plans on own branches (never main)
     S->>C: accelerate - plan the next items on the cloud credit
     L-->>S: back below 50%
@@ -181,6 +181,7 @@ tests/                              pytest suite
 | `profile init · show · check · learn` | your customization file: create it, see which questions it answers, check it, learn from a finished setup |
 | `skills [repo]` | installed skills per engine; skills agent files name but lack |
 | `preflight` | everything a round depends on - PASS / WARN / FAIL |
+| `usage claude · codex` | how full each allowance is, from the tool's own record; unreadable = no new work (fail closed) |
 | `supervise` | unattended rounds: limit detection, fallback build lanes, gate, re-exec on change, STOP file |
 | `keeper` | one scheduled pass: restarts, build lanes, idle planning, cloud planners steady / accelerate / handback |
 | `gap` | knowledge gap: work the lead didn't see, and `REVIEWERS=<n>` |
