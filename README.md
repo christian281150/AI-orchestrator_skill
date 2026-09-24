@@ -52,7 +52,7 @@ at least once; the [50 lessons](skills/build-orchestration-setup/references/08-l
 
 | Where you work | How |
 |---|---|
-| **Claude Code** | `/plugin marketplace add christian281150/AI-orchestrator_skill` then `/plugin install ai-orchestrator@ai-orchestrator` - adds the skill plus `/orchestrate` and `/build-status` |
+| **Claude Code** | `/plugin marketplace add christian281150/AI-orchestrator_skill` then `/plugin install ai-orchestrator@ai-orchestrator` - adds the skill plus `/orchestrate`, `/build-status` and `/check-setup` |
 | **Claude apps** (claude.ai, desktop, Cowork) | download `build-orchestration-setup.zip` from the [latest release](https://github.com/christian281150/AI-orchestrator_skill/releases/latest) and upload it in the app's skill settings |
 | **Any agent** (Codex, Cursor, Gemini CLI, ...) | `npx skills add christian281150/AI-orchestrator_skill` ([skills CLI](https://github.com/vercel-labs/skills)) |
 | **Try without installing** | `npx skills use christian281150/AI-orchestrator_skill@build-orchestration-setup \| claude` |
@@ -175,6 +175,7 @@ tests/                              pytest suite
 
 | Toolkit command | Does |
 |---|---|
+| `doctor` | is this computer ready? Python, Git, your AI tools, project folder - with a fix per problem, before any project exists |
 | `init <repo>` / `unfilled` | copy templates + tools (never overwrite, hooks, author) / list placeholders left |
 | `profile init · show · check` | your customization file: create it, see which questions it answers, check it |
 | `skills [repo]` | installed skills per engine; skills agent files name but lack |

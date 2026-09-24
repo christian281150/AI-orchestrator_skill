@@ -71,6 +71,9 @@ Do these once. After each, open a **new** terminal and run the check.
 - **Linux:** use your package manager (`sudo apt install git python3`); use `python3`.
 - **Tell git who you are** (once): `git config --global user.name "Your Name"` and
   `git config --global user.email "you@example.com"` (for public repos use your git host's no-reply address).
+- **Check everything at once** (after section 5): in your coding agent type `/check-setup`, or in the terminal
+  `python <skill folder>/scripts/orch.py doctor --tools <your AI tool>`. It lists every problem with the fix
+  (`DOCTOR OK` = ready).
 
 ## 5. Install the skill
 **Path B** - in the terminal:
@@ -146,6 +149,7 @@ What happens next (you mostly answer questions; each has a **recommended** answe
 |---|---|---|
 | `'git' is not recognized` / `'python' is not recognized` | not installed, or the terminal was open during install | install again; for Python **tick "Add to PATH"**; open a **new** terminal |
 | `python` opens the Microsoft Store | Windows' placeholder, not real Python | install from python.org with "Add to PATH", or turn off *App execution aliases* for python in Windows settings |
+| Not sure what's wrong | - | run `/check-setup` (or `orch.py doctor`) - every problem comes with its fix |
 | `/orchestrate` is not suggested | plugin not loaded yet | restart the agent; `claude plugin list` must show `ai-orchestrator` |
 | The skill stops at step 0 or 1 | your idea/spec/architecture are missing or have gaps - by design | fix the listed gaps in your documents, then run `/orchestrate` again |
 | `PREFLIGHT FAILED` | a setup check is red | each `[FAIL]` line says what's wrong (e.g. a tool not installed); fix it or ask the agent to |

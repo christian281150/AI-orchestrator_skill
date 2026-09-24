@@ -33,7 +33,7 @@ never pay twice.
 - `assets/templates/` - board, rules, coordinator prompt, engine-neutral roles, skills plan, ledgers, hooks,
   config, schedulers.
 - `assets/profile.toml` - the owner's customization file (standing preferences; see Phase 2).
-- `scripts/orch.py` - standard-library Python 3.11+ toolkit: `init`, `unfilled`, `profile`, `skills`, `preflight`,
+- `scripts/orch.py` - standard-library Python 3.11+ toolkit: `doctor`, `init`, `unfilled`, `profile`, `skills`, `preflight`,
   `supervise`, `keeper`, `gap`, `board`, `check-not-done`, `safe-commit`, `redact`, `snapshot`, `live-view`.
 
 If `references/`, `scripts/` and `assets/` are not next to this file, get them from
@@ -76,7 +76,8 @@ transcript into spec documents first - outside this skill.)
 
 Then write the **intake summary**: work items found, rough size in agent-hours, dependencies, risk flags
 (writes to live, money, credentials, publishing), the machine (OS, RAM - measured), the AI tools and
-subscriptions the owner has.
+subscriptions the owner has. Measure the machine with `orch.py doctor --project <repo>` (works before any
+config exists); walk a non-technical owner through each FAIL's "Fix:" before going on.
 
 ## Phase 1 - Readiness gate (a check, not spec work) -> `references/01-readiness-gate.md`
 1. Score `SPEC-READINESS.md` (12 dimensions, 0/1/2), citing where each is written.

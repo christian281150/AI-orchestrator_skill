@@ -34,6 +34,9 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--project", nargs="?", const=".", default=None,
                    help="use <repo>/.ai-orchestrator.toml (default repo: current folder) instead of the home profile")
     s.add_argument("--force", action="store_true")
+    s = sub.add_parser("doctor", help="is this computer ready? (before any project exists)")
+    s.add_argument("--tools", nargs="*", default=None, help="AI tool commands to check, e.g. claude codex")
+    s.add_argument("--project", default=None, help="the project folder you plan to use")
     sub.add_parser("preflight", help="check everything a round depends on")
     s = sub.add_parser("skills", help="inventory installed skills per engine; flag skills agent files name but lack")
     s.add_argument("root", nargs="?", default=".")
@@ -63,6 +66,12 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("arg", nargs="?")
     a = ap.parse_args(argv)
 
+    if a.cmd == "doctor":
+        from .doctor import run as doctor
+        fails, lines = doctor(a.tools, Path(a.project) if a.project else None)
+        print("\n".join(lines))
+        print("DOCTOR OK - ready for the first setup" if not fails else f"DOCTOR: {fails} problem(s) to fix first")
+        return 1 if fails else 0
     if a.cmd == "profile":
         from . import profile
         if a.action == "init":
