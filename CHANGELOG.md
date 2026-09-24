@@ -3,6 +3,22 @@
 All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## 1.5.0 - 2026-09-24
+Gap-closing release: nothing new in concept - it fills gaps in the existing rounds, keeper and failover that
+showed up while running builds for several days.
+### Added
+- `references/11-long-running-builds.md`: ten gaps closed for multi-day unattended builds - just-in-time planning,
+  fix routing, build-lane cap by load with a memory guard, watchdog duties, restart reconciliation, cloud helpers,
+  cloud setup checklist, machine traps, race discipline, usage measurement - each with problem, rule, wiring and a
+  control that can go red; plus five clearly marked proposals (history secret scan, stale handovers, a second
+  machine, disk space, clock changes).
+- Questionnaire round 7c (planning pace, fix routing, lane cap by load, watchdog extras); matching rows in
+  `orchestration-config.md`.
+- Lessons 45-49 (numbering shifted; 50 in total).
+### Changed
+- SKILL.md points to the new reference; no other behaviour changed. Documentation-only release: rules the toolkit
+  does not automate yet are marked as wired in the owner's launcher/watchdog scripts.
+
 ## 1.4.0 - 2026-09-24
 ### Changed
 - **Repository renamed to `AI-orchestrator_skill`**; plugin and marketplace are now `ai-orchestrator`

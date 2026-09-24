@@ -106,6 +106,18 @@ hand back when it recovers (**recommended** if the owner has cloud credit) / off
 (**recommended**) / no, only the lead plans.
 **7b.4 Keeper** - scheduled pass every ~10 minutes (**recommended** for level 4) / supervisor only.
 
+## Round 7c - Running for days  (see `11-long-running-builds.md`; level 4, or any build longer than a day)
+**7c.1 Planning pace** - just in time: plan only while ready work is below half the build-lane cap
+(**recommended**) / plan ahead as far as possible.
+**7c.2 Fix routing** - bounded rework goes as a fix brief to a build-provider fix lane; the lead only gates
+(**recommended**) / the lead fixes everything itself.
+**7c.3 Build-lane cap by load** - lower cap while lead and build providers run together, higher when the lead is
+limited; no new starts at ~85% memory, refuse at ~90% (**recommended**) / one fixed cap.
+**7c.4 Watchdog extras** - dry-run first, then live; restarts capped per day; hung-process kill after N minutes
+(**recommended**) / supervisor only.
+Proposals (ask only if relevant): history secret scan before going public; stale-handover warning; a lease when a
+second machine joins.
+
 ## Round 8 - Guardrails
 **8.1 Autonomy** - decide and log: back up -> decide -> log chosen and not chosen -> continue
 (**recommended**) / ask on judgement calls.

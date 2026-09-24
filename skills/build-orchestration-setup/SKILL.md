@@ -5,7 +5,7 @@ license: MIT
 compatibility: Toolkit needs git and Python 3.11+ (standard library only). Works with any agent that loads SKILL.md folders; the unattended supervisor drives any CLI coding agent.
 metadata:
   author: christian281150
-  version: "1.4.0"
+  version: "1.5.0"
   repository: https://github.com/christian281150/AI-orchestrator_skill
 ---
 
@@ -29,7 +29,7 @@ each tool on the work it does best, review depth by risk, the fewest skills per 
 never pay twice.
 
 ## Kit and references
-- `references/01-readiness-gate.md` ... `10-tool-routing.md` - the detail behind each phase (load on demand).
+- `references/01-readiness-gate.md` ... `11-long-running-builds.md` - the detail behind each phase (load on demand).
 - `assets/templates/` - board, rules, coordinator prompt, engine-neutral roles, skills plan, ledgers, hooks,
   config, schedulers.
 - `scripts/orch.py` - standard-library Python 3.11+ toolkit: `init`, `unfilled`, `skills`, `preflight`,
@@ -102,6 +102,7 @@ machine settings in `orchestration.toml`.
    automatic restart; chat desk or not.
 7b. **Which tool does what** - show the routing table from `10-tool-routing.md` with the owner's tools; cloud
    planners (steady / accelerate / handback); idle build providers planning safe items; keeper.
+7c. Running for days - planning pace, fix routing, lane cap by load, watchdog extras (`11-long-running-builds.md`).
 8. Guardrails - decide-and-log; reserved actions; git model; commit attribution.
 9. Reporting - board in repo; dashboard on a schedule; local live view; handovers and alerts.
 10. "Anything the build must never / always do?"
@@ -150,6 +151,8 @@ dry round on a trivial P1 item; verbatim results into `HANDOVER-1.md`.
   runs; idle planning of safe items; cloud planners steady / accelerate / handback above a credit floor.
 - **Every round starts with `orch.py gap`**: work the lead did not see -> `REVIEWERS=<n>`; foreign plans get a
   gap summary, a blind lead re-plan and an arbiter's ruling before they are built.
+- **Running for days:** just-in-time planning, fix routing, lane cap by load, watchdog, restart reconciliation,
+  cloud helpers, machine traps, race discipline, usage measurement -> `references/11-long-running-builds.md`.
 - Cloud sessions, chat-driven mode and a monitoring chat: see the references.
 Pipeline per item: check-not-done -> librarian -> planner (risk tier, skills, authored-by) -> plan reviewer
 (max 2 rounds) -> build -> task reviewer (depth by tier) -> integrator -> merge gate -> board `done` with commit +

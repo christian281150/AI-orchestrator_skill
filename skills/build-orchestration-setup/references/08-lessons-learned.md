@@ -69,22 +69,31 @@ interruption. Each is built into the kit where it can be; the rest are rules.
 34. **Mixing "what to build" into the build** blurred who decides and produced questions mid-run. -> This skill
     starts only when the spec is settled; the readiness gate returns gaps instead of filling them.
 
+35. **The lead planned days ahead and had no allowance left to gate.** -> Plan just in time; allowance order: gate,
+  plan, build (`11-long-running-builds.md` A).
+36. **Small rework pulled the lead into building.** -> Fix briefs to build-provider fix lanes, answered with the
+  brief's hash (B).
+37. **Lanes crashed half-way on memory.** -> Cap by load, no new starts at ~85%, retry memory-refused lanes (C).
+38. **The scheduler ended the lanes it had started.** -> Start long-lived children outside the task; relaunch lanes
+  that never wrote a status (H).
+39. **Two planners took the same row.** -> One claim per row; build-provider planners yield to the lead (I).
+
 ## Windows specifics
-35. PowerShell 5.1: `>` writes UTF-16; `Set-Content -Encoding UTF8` adds a byte-order mark (breaks agent
+40. PowerShell 5.1: `>` writes UTF-16; `Set-Content -Encoding UTF8` adds a byte-order mark (breaks agent
     frontmatter); native arguments lose double quotes; `*>` with `ErrorActionPreference=Stop` turns stderr
     into a fatal error. -> The kit is Python; write UTF-8 without BOM; use `Start-Process` redirects.
-36. The console code page (cp1252) broke tools reading git output. -> Always decode git output as UTF-8.
-37. Command lines over ~8k characters fail. -> Pass prompts as files.
-38. A remote tool call times out after ~60 s. -> Start long jobs detached and poll.
-39. Never run a file edit and its commit in the same parallel batch - the commit can take the old version.
-40. PowerShell `Start-Process -ArgumentList` splits arguments that contain spaces - quote them explicitly.
+41. The console code page (cp1252) broke tools reading git output. -> Always decode git output as UTF-8.
+42. Command lines over ~8k characters fail. -> Pass prompts as files.
+43. A remote tool call times out after ~60 s. -> Start long jobs detached and poll.
+44. Never run a file edit and its commit in the same parallel batch - the commit can take the old version.
+45. PowerShell `Start-Process -ArgumentList` splits arguments that contain spaces - quote them explicitly.
 
 ## Infrastructure and safety
-41. **Blast radius decides hosting.** A breach of a tunnel ending on a personal PC reaches everything on it; on
+46. **Blast radius decides hosting.** A breach of a tunnel ending on a personal PC reaches everything on it; on
     a small VM it reaches a server rebuilt in 20 minutes.
-42. **Sequencing, not attackers:** configure the access policy before the endpoint is reachable.
-43. **Paid capacity left scaled up** costs money for nothing. -> Up in the step that starts the load, down in a
+47. **Sequencing, not attackers:** configure the access policy before the endpoint is reachable.
+48. **Paid capacity left scaled up** costs money for nothing. -> Up in the step that starts the load, down in a
     `finally`.
-44. **External build agents with full access** (sandbox broken on the OS): credentials stripped from their
+49. **External build agents with full access** (sandbox broken on the OS): credentials stripped from their
     environment, residual risk named in the handover.
-45. **Data leaving the machine**: redact with a proven scanner (planted secret found, then zero hits).
+50. **Data leaving the machine**: redact with a proven scanner (planted secret found, then zero hits).

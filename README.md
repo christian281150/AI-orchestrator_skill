@@ -41,7 +41,7 @@ it does best, automatic failover on usage limits, and reporting you can read wit
 
 It comes out of a real multi-week build - up to **10 parallel lead lanes plus build lanes on a second AI
 provider, cloud planners and a keeper process**, running unattended on one PC. Every rule in it paid for itself
-at least once; the [45 lessons](skills/build-orchestration-setup/references/08-lessons-learned.md) are included.
+at least once; the [50 lessons](skills/build-orchestration-setup/references/08-lessons-learned.md) are included.
 
 ## Get the skill
 
@@ -140,7 +140,7 @@ sequenceDiagram
 ```text
 skills/build-orchestration-setup/   THE SKILL
   SKILL.md                          the phases
-  references/                       10 files, loaded on demand (readiness gate ... tool routing)
+  references/                       11 files, loaded on demand (readiness gate ... long-running builds)
   scripts/orch.py                   the toolkit - Python 3.11+ standard library only
   assets/templates/                 copied into your repo by `orch.py init`
 commands/                           /orchestrate, /build-status (Claude Code)
@@ -165,7 +165,9 @@ tests/                              pytest suite
 This is **my personal approach to AI orchestration**. I built it while running a real multi-week software
 build with several AI agents in parallel, and I learned most of it the hard way - the lessons file is the
 receipt. It is not an official method and not the only way to do this. It is what worked for me, written down
-so the next build starts where the last one ended.
+so the next build starts where the last one ended. It keeps growing the same way: every time a real build hits a gap, the gap gets
+closed here - the latest round (planning pace, fix routing, memory limits, restarts, cloud helpers, races) is in
+[`11-long-running-builds.md`](skills/build-orchestration-setup/references/11-long-running-builds.md).
 
 **I'd be really happy about your feedback - and even happier if you give it a shot.** Try it on a toy
 project or a real one and tell me how it went: what worked, what broke, what you'd do differently, which tool

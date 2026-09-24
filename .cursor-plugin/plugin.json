@@ -2,7 +2,7 @@
   "name": "ai-orchestrator",
   "displayName": "AI Orchestrator",
   "description": "Orchestrates the BUILD once idea, spec and architecture are settled (not a spec tool): readiness gate, guided setup questionnaire, skills plan, parallel lanes across AI tools, one merge gate, provider failover, never-twice memory, reporting.",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "author": {
     "name": "christian281150",
     "url": "https://github.com/christian281150"

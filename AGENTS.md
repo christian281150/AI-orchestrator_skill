@@ -7,7 +7,7 @@ Guidance for AI coding agents (Claude Code, Codex, Cursor, Gemini, ...) that cha
 ```
 skills/build-orchestration-setup/   the skill - follows the Agent Skills spec (agentskills.io/specification)
   SKILL.md                          lean: phases + pointers; keep under 500 lines / ~5k tokens
-  references/NN-topic.md            detail (01 readiness gate ... 10 tool routing), loaded on demand
+  references/NN-topic.md            detail (01 readiness gate ... 11 long-running builds), loaded on demand
   scripts/                          orch.py + orchestrator/ - Python 3.11+ standard library ONLY
   assets/templates/                 files `orch.py init` copies into a user's repository
 commands/                           Claude Code slash commands (markdown + frontmatter)

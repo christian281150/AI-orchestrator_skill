@@ -37,6 +37,10 @@ is a decision -> log it in `decisions-log.md` and update `orchestration.toml` in
 | 7b.2 | Cloud planners | | | |
 | 7b.3 | Idle build providers plan safe items | | | |
 | 7b.4 | Keeper | | | |
+| 7c.1 | Planning pace | | | |
+| 7c.2 | Fix routing | | | |
+| 7c.3 | Build-lane cap by load / memory guard | | | |
+| 7c.4 | Watchdog extras | | | |
 | 8.1 | Autonomy | | | |
 | 8.2 | Reserved for the owner | | | |
 | 8.3 | Git model | | | |
