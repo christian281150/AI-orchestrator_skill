@@ -11,6 +11,9 @@ Ten short rounds, typically 20-30 minutes. Rules:
 - **Profile first.** Run `orch.py profile show --project <repo>`: it prints each questionnaire item the owner's
   profile answers (e.g. `2.4   3` = adoption level 3). Skip those items, show them once in the summary ("from your profile"), and
   never override them silently. `profile check` problems are shown to the owner before anything is used.
+- **Profile last.** After `orchestration-config.md` is written, run `orch.py profile learn`, show its list
+  (added / already there / yours kept / not learned) and run `--write` only on the owner's yes. It fills empty
+  values only; free-text answers are listed as "not learned", never guessed.
   Key-by-key map: `docs/CONFIGURATION.md` in the skill repository.
 - Provider-neutral: nothing here assumes a particular AI vendor. "Lead provider" = the one trusted to plan,
   review and merge; "build providers" = the ones that implement approved plans.

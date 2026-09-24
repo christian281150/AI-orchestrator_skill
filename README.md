@@ -118,6 +118,7 @@ Two files, both plain text ([TOML](https://toml.io)), both optional:
 python <skill>/scripts/orch.py profile init     # create your profile from the commented template
 python <skill>/scripts/orch.py profile check    # allowed values, no secrets
 python <skill>/scripts/orch.py profile show     # which questions it answers
+python <skill>/scripts/orch.py profile learn    # after a setup: save its answers into EMPTY profile values (--write)
 ```
 Every key, its allowed values and ready-made recipes (one tool only, 8 GB machine, cloud off, AI co-author
 allowed, keep agents off production): **[CONFIGURATION.md](docs/CONFIGURATION.md)**.
@@ -177,7 +178,7 @@ tests/                              pytest suite
 |---|---|
 | `doctor` | is this computer ready? Python, Git, your AI tools, project folder - with a fix per problem, before any project exists |
 | `init <repo>` / `unfilled` | copy templates + tools (never overwrite, hooks, author) / list placeholders left |
-| `profile init · show · check` | your customization file: create it, see which questions it answers, check it |
+| `profile init · show · check · learn` | your customization file: create it, see which questions it answers, check it, learn from a finished setup |
 | `skills [repo]` | installed skills per engine; skills agent files name but lack |
 | `preflight` | everything a round depends on - PASS / WARN / FAIL |
 | `supervise` | unattended rounds: limit detection, fallback build lanes, gate, re-exec on change, STOP file |

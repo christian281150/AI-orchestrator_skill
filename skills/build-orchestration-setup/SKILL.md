@@ -94,8 +94,9 @@ Ten short rounds, all about *how* to build. Record answers + options not taken i
 machine settings in `orchestration.toml`.
 **First read the owner's profile:** `orch.py profile show --project <repo>` (home `~/.ai-orchestrator/profile.toml`,
 project `.ai-orchestrator.toml` wins). Skip every item it answers, list those answers once in the summary for
-confirmation, and ask only the rest. No profile: offer `orch.py profile init` at the end so the next project asks
-less. `orch.py profile check` must be clean before its values are used.
+confirmation, and ask only the rest. `orch.py profile check` must be clean before its values are used.
+At the end, run `orch.py profile learn` (shows which answers would fill EMPTY profile values; set values are
+never overwritten) and apply it with `--write` on the owner's yes - the next project asks almost nothing.
 1. Project and people - project type (decides lanes), who decides, vocabulary, date vs quality vs cost.
 2. Where it runs - local CLI + supervisor / cloud sessions / chat-driven / hybrid; OS; involvement;
    **adoption level 1-4**.

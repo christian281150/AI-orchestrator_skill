@@ -108,6 +108,8 @@ Every question the profile answers is skipped in the setup.
   `~/.ai-orchestrator/profile.toml` (Windows: `C:\Users\<you>\.ai-orchestrator\profile.toml`) in Notepad.
   Every line has a comment; leave anything empty that you want to be asked.
 - **Check it:** `python <skill folder>/scripts/orch.py profile check` → `profile OK`.
+- **Or let it learn:** skip all this - at the end of your first setup the agent offers to save your answers
+  into the profile (it shows the list first; your own values are never overwritten).
 
 All keys: [CONFIGURATION.md](CONFIGURATION.md).
 

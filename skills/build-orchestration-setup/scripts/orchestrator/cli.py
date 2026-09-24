@@ -29,8 +29,11 @@ def main(argv: list[str] | None = None) -> int:
     s.add_argument("--force", action="store_true")
 
     sub.add_parser("unfilled", help="list {{PLACEHOLDERS}} still to fill").add_argument("target", nargs="?", default=".")
-    s = sub.add_parser("profile", help="your personal customization file: init | show | check")
-    s.add_argument("action", choices=["init", "show", "check"])
+    s = sub.add_parser("profile", help="your personal customization file: init | show | check | learn")
+    s.add_argument("action", choices=["init", "show", "check", "learn"])
+    s.add_argument("--from", dest="record", default="docs/coordination/orchestration-config.md",
+                   help="learn: the finished questionnaire record")
+    s.add_argument("--write", action="store_true", help="learn: apply the listed additions (default: show only)")
     s.add_argument("--project", nargs="?", const=".", default=None,
                    help="use <repo>/.ai-orchestrator.toml (default repo: current folder) instead of the home profile")
     s.add_argument("--force", action="store_true")
@@ -78,6 +81,23 @@ def main(argv: list[str] | None = None) -> int:
             ok, msg = profile.init(Path(a.project).resolve() if a.project else None, force=a.force)
             print(msg)
             return 0 if ok else 1
+        if a.action == "learn":
+            if not Path(a.record).exists():
+                print(f"no questionnaire record at {a.record} - pass --from <orchestration-config.md>")
+                return 1
+            target = profile.paths(Path(a.project).resolve() if a.project else None)[-1]
+            plan = profile.learn(Path(a.record), target, a.write)
+            titles = {"add": "will be added (profile was empty)" if not a.write else "added",
+                      "same": "already in your profile", "kept_yours": "your value kept - never overwritten",
+                      "not_learned": "not learned"}
+            print(f"profile: {target}")
+            for k, title in titles.items():
+                if plan[k]:
+                    print(f"{title} ({len(plan[k])}):")
+                    print("\n".join("  " + x for x in plan[k]))
+            if plan["add"] and not a.write:
+                print("nothing written - run again with --write to apply the additions")
+            return 0
         prof, used = profile.load(Path(a.project or ".").resolve())
         if a.action == "check":
             probs = profile.check(prof)

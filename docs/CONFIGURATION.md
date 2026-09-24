@@ -18,6 +18,8 @@ environment variables only.
 Template: [`skills/build-orchestration-setup/assets/profile.toml`](../skills/build-orchestration-setup/assets/profile.toml).
 Create: `python <skill>/scripts/orch.py profile init` (add `--project` for a per-project file).
 Check: `orch.py profile check` · See what it answers: `orch.py profile show`.
+Learn from a finished setup: `orch.py profile learn` lists what this project's answers would add, `--write`
+applies it. Only **empty** values are filled - a value you set is never overwritten, free text is never guessed.
 Empty values (`""`, `0`, `[]`) mean "ask me" and never override a value set in the other profile file.
 
 | Section · key | Values | Answers question | Notes |

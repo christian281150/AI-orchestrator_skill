@@ -37,3 +37,43 @@ def test_check_goes_red(tmp_path):
           '[owner]\napi_' + 'token = "x"\n')
     probs = "\n".join(profile.check(profile.load(home=tmp_path)[0]))
     assert "adoption_level" in probs and "lower than memory_refuse_pct" in probs and "looks like a secret" in probs
+
+
+RECORD = """| # | Question | Chosen | Not taken | Date |
+|---|---|---|---|---|
+| 1.3 | Owner vocabulary | not from an IT background - spell out abbreviations | technical | |
+| 2.4 | Adoption level (1-4) | 3 - multi-provider (recommended) | 2, 4 | |
+| 3.2 | Lead provider | tool-a (its CLI) | | |
+| 3.3 | Build providers | tool-b, tool-c | | |
+| 5.2 | Thinking-role models | the big one for planning, the small one for relays | | |
+| 8.1 | Autonomy | decide and log | ask | |
+| 8.3 | Git model | feature branches per lane | | |
+"""
+
+
+def test_learn_fills_only_empty_values_and_never_overwrites(tmp_path):
+    record = write(tmp_path / "orchestration-config.md", RECORD)
+    target = write(tmp_path / ".ai-orchestrator/profile.toml",
+                   profile.TEMPLATE.read_text().replace('autonomy = ""  ', 'autonomy = "ask"'))
+    before = target.read_text()
+    plan = profile.learn(record, target)                     # dry run: shows, writes nothing
+    assert target.read_text() == before
+    assert any("adoption_level = 3" in x for x in plan["add"])
+    assert any("autonomy" in x and 'yours "ask" kept' in x for x in plan["kept_yours"])
+    assert any("thinking" in x for x in plan["not_learned"])  # free text is never guessed
+    assert any("git_model" in x for x in plan["not_learned"])  # "feature branches" is not an allowed value
+
+    profile.learn(record, target, write=True)
+    prof = profile.load(home=tmp_path)[0]
+    assert prof["defaults"]["adoption_level"] == 3 and prof["owner"]["vocabulary"] == "plain"
+    assert prof["tools"]["lead"] == "tool-a" and prof["tools"]["build"] == ["tool-b", "tool-c"]
+    assert prof["defaults"]["autonomy"] == "ask"             # the owner's own value survived
+    assert profile.check(prof) == []
+    assert "# 0 ask | 1 rituals" in target.read_text()        # comments kept
+
+
+def test_learn_creates_the_profile_when_missing(tmp_path):
+    record = write(tmp_path / "rec.md", RECORD)
+    target = tmp_path / "home" / ".ai-orchestrator" / "profile.toml"
+    profile.learn(record, target, write=True)
+    assert target.exists() and "tool-a" in target.read_text()
